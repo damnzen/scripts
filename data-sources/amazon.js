@@ -31,7 +31,7 @@ Amazon.prototype.amazlet = function(query) {
 	var result = http().get("http://app.bloghackers.net/amazlet/?type=all&__mode=keywordsearch&locale=jp&keyword=" + encodeURIComponent(query));
 	var items = result.body.split('<div class="search-result">');
 	delete items[0];
-	delete items[items.length-1];
+//	delete items[items.length-1];
 
 	var resultArray = [];
 	for each(item in items){
