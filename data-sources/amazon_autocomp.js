@@ -21,7 +21,6 @@ AmazonComp.prototype.search = function(query) {
 	var result = http().get("http://completion.amazon.co.jp/search/complete?mkt=6&method=completion&search-alias=aps&q=" + encodeURIComponent(query));
 	var json = JSON.parse(result.body);
 	var resultArray = [];
-	return json[1];
 	for each(var i in json[1]){
 		resultArray.push({"title": i});
 	}
