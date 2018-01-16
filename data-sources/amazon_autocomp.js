@@ -21,7 +21,7 @@ Issue a search query to Discogs database.
 AmazonComp.prototype.search = function(query) {
   var result = http().get("http://completion.amazon.co.jp/search/complete?mkt=6&method=completion&search-alias=aps&q=" + encodeURIComponent(query));
   var json = JSON.parse(result.body);
-  return data[1];
+  return json[1];
   return json.results;  
 }
 
