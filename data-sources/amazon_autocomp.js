@@ -28,7 +28,7 @@ AmazonComp.prototype.search = function(query) {
 /**
 @param {string} id - The resource identifier.
 */
-Discogs.prototype.extra = function(id) {
+AmazonComp.prototype.extra = function(id) {
     var resultJson = http().get("https://api.discogs.com/" + this.type + "s/" + id + "?key=" + this.apiKey + "&secret=" + this.apiSecret);
     var result = JSON.parse(resultJson.body); 
     if (result.images !== undefined) 
