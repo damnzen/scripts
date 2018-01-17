@@ -44,6 +44,7 @@ Amazon.prototype.amazlet = function(query) {
 			if (/<span class="result-price">(.*?)<\/span>/.test(item)){
 				o["desc"] = RegExp.$1;
 				o["price"] = RegExp.$1.slice(2).replace(",","");
+			}
 			if (/<img src="(.*?)"/.test(item)){
 				o["thumb"] = RegExp.$1;
 				o["image"] = o["thumb"].replace("SL75_", "SL1500_");
