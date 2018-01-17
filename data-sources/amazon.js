@@ -73,6 +73,7 @@ Amazon.prototype.rss = function(query) {
 	    "desc" : item.getElementsByTagName("summary")[0].innerText,
 	  };
 	  var link = item.getElementsByTagName("link")[0].href;
+	log(item.getElementsByTagName("link")[0]);
 	  var asin = link.substring(link.lastIndexOf("=") + 1);
 	  o["image"] = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
 	  o["thumb"] = "http://images-jp.amazon.com/images/P/" + asin + ".09.THUMBZZZ.jpg";
