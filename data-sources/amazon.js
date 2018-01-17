@@ -40,7 +40,10 @@ Amazon.prototype.amazlet = function(query) {
 			o["id"] = o;
 			o["title"] = RegExp.$2;
 			o["url"] = RegExp.$1;
-			if (/<span class="result-price">(.*?)<\/span>/.test(item)) o["desc"] = RegExp.$1;
+			o["asin"] = RegExp.$1.match(/ASIN\/([^/]+)/)[1];
+			if (/<span class="result-price">(.*?)<\/span>/.test(item)){
+				o["desc"] = RegExp.$1;
+				o["price"] = RegExp.$1.slice(2).replace(",","");
 			if (/<img src="(.*?)"/.test(item)){
 				o["thumb"] = RegExp.$1;
 				o["image"] = o["thumb"].replace("SL75_", "SL1500_");
