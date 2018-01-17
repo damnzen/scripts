@@ -63,6 +63,7 @@ Amazon.prototype.rss = function(query) {
 	//var json = xmlToJSON.parseString(r.body);
 var dom = parser.load(r.body);
 var json = dom.toJSON();
+	log(json);
 //var items = dom.getElementsByTagName("entry");
 var items = json["feed"]["entry"];
 //log(dom);
