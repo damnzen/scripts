@@ -54,3 +54,30 @@ Amazon.prototype.amazlet = function(query) {
 	}
 	return resultArray
 }
+
+Amazon.prototype.rss = function(query) {
+	var parser = new XMLParser();
+	//var x2js = new X2JS();
+	var url = "https://www.kuroneko-square.net/services/amazon/rest?format=atom&Keywords=" + encodeURIComponent(query);
+	var r = http().get(url);
+	//var json = xmlToJSON.parseString(r.body);
+	var dom = parser.load(r.body);
+	//var json = xmlToJson(dom);
+	var items = dom.getElementsByTagName("entry");
+	//var items = json["feed"]["entry"];
+
+	var resultList = [];
+	for each(var item in items){
+	  o = {
+	    "title" : item.getElementsByTagName("title")[0].innerText,
+	    "desc" : item.getElementsByTagName("summary")[0].innerText,
+	  };
+	  var link = item.getElementsByTagName("link")[0].href;
+	  var asin = link.substring(link.lastIndexOf("=") + 1);
+	  o["image"] = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
+	  o["thumb"] = "http://images-jp.amazon.com/images/P/" + asin + ".09.THUMBZZZ.jpg";
+	  o["id"] = o;
+	  resultList.push(o);
+	}
+	return resultList;
+}
