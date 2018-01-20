@@ -24,6 +24,12 @@ Issue a search query to Discogs database.
 Discogs.prototype.search = function(query) {
   var result = http().get("https://api.discogs.com/database/search?q=" + encodeURIComponent(query) + "&key=" + this.apiKey + "&secret=" + this.apiSecret + "&type=" + this.type);
   var json = JSON.parse(result.body);
+  for each(var res in json.results){
+      var v = res.title.splite(" - ");
+      res['title'] = v[1];
+      res['desc'] = [v[0], res.year].join();
+      if (res.barcode != undefined) res['barcode'] = res.barcode[0];
+  }
   return json.results;  
 }
 
@@ -54,6 +60,9 @@ Discogs.prototype.extra = function(id) {
     if (result.styles !== undefined)  
         result['styles'] = result.styles.join();     
     if (result.genres !== undefined)
-        result['genres'] = result.genres.join();        
+        result['genres'] = result.genres.join();
+    if (result.labels !== undefined)
+        result['label'] = result.labels[0].name;
+
     return result;
 }
