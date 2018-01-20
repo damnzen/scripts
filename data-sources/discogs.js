@@ -25,7 +25,7 @@ Discogs.prototype.search = function(query) {
   var result = http().get("https://api.discogs.com/database/search?q=" + encodeURIComponent(query) + "&key=" + this.apiKey + "&secret=" + this.apiSecret + "&type=" + this.type);
   var json = JSON.parse(result.body);
   for each(var res in json.results){
-      var v = res.title.splite(" - ");
+      var v = res.title.split(" - ");
       res['title'] = v[1];
       res['desc'] = [v[0], res.year].join();
       if (res.barcode != undefined) res['barcode'] = res.barcode[0];
