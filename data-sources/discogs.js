@@ -54,7 +54,7 @@ Discogs.prototype.extra = function(id) {
     if (result.videos !== undefined) 
         result['videos'] = result.videos.map(function(e) { return e.uri; }).join();     
     if (result.artists !== undefined)
-        result['artists'] = result.artists.map(function(e) { return e.name; }).join();   
+        result['artists'] = result.artists.map(function(e) { return e.anv ? e.anv : e.name; }).join();   
     if (result.tracklist !== undefined)  
         result['tracklist'] = result.tracklist.map(function(e) { return e.position + ". " + e.title + " " + e.duration; }).join("\n");     
     if (result.styles !== undefined)  
