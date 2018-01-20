@@ -45,6 +45,12 @@ Discogs.prototype.searchbyartist = function(query) {
   return json.results;  
 }
 
+Discogs.prototype.artist = function(query) {
+  var result = http().get("https://api.discogs.com/database/search?anv=" + encodeURIComponent(query) + "&key=" + this.apiKey + "&secret=" + this.apiSecret + "&type=artist");
+  var json = JSON.parse(result.body);
+  return json.results;  
+}
+
 /**
 Issue a search query to Discogs database.
 @param {string} code - Search barcodes.
