@@ -50,6 +50,7 @@ Discogs.prototype.extra = function(id) {
     var resultJson = http().get("https://api.discogs.com/" + this.type + "s/" + id + "?key=" + this.apiKey + "&secret=" + this.apiSecret);
     var result = JSON.parse(resultJson.body); 
     if (result.images !== undefined) 
+        result['image'] = result.images[0].uri; 
         result['images'] = result.images.map(function(e) { return e.uri; }).join(); 
     if (result.videos !== undefined) 
         result['videos'] = result.videos.map(function(e) { return e.uri; }).join();     
