@@ -38,8 +38,8 @@ Discogs.prototype.searchbyartist = function(query) {
   var json = JSON.parse(result.body);
   for each(var res in json.results){
       var v = res.title.split(" - ");
-      res['title'] = v[1];
-      res['desc'] = [v[0], res.year].join();
+      res['title'] = v[0];
+      res['desc'] = [v[1], res.year].join();
       res['barcode'] = res.barcode ? res.barcode[0] : '';
   }
   return json.results;  
