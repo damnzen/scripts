@@ -33,6 +33,18 @@ Discogs.prototype.search = function(query) {
   return json.results;  
 }
 
+Discogs.prototype.searchbyartist = function(query) {
+  var result = http().get("https://api.discogs.com/database/search?artist=" + encodeURIComponent(query) + "&key=" + this.apiKey + "&secret=" + this.apiSecret + "&type=" + this.type);
+  var json = JSON.parse(result.body);
+  for each(var res in json.results){
+      var v = res.title.split(" - ");
+      res['title'] = v[1];
+      res['desc'] = [v[0], res.year].join();
+      if (res.barcode != undefined) res['barcode'] = res.barcode[0];
+  }
+  return json.results;  
+}
+
 /**
 Issue a search query to Discogs database.
 @param {string} code - Search barcodes.
