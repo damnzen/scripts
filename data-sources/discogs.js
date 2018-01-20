@@ -28,7 +28,7 @@ Discogs.prototype.search = function(query) {
       var v = res.title.split(" - ");
       res['title'] = v[1];
       res['desc'] = [v[0], res.year].join();
-      res['barcode'] = res.barcode != undefined ? res.barcode[0] : '';
+      res['barcode'] = res.barcode ? res.barcode[0] : '';
   }
   return json.results;  
 }
@@ -40,7 +40,7 @@ Discogs.prototype.searchbyartist = function(query) {
       var v = res.title.split(" - ");
       res['title'] = v[1];
       res['desc'] = [v[0], res.year].join();
-      res['barcode'] = res.barcode != undefined ? res.barcode[0] : '';
+      res['barcode'] = res.barcode ? res.barcode[0] : '';
   }
   return json.results;  
 }
