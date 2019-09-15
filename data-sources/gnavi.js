@@ -19,7 +19,7 @@ function hiraToKata(str){
     });
 }
 
-function Gnavi (apiKey , apiSecret, type) {
+function Gnavi(apiKey , apiSecret, type) {
     this.apiKey = apiKey;
 }
 
@@ -28,7 +28,7 @@ function Gnavi (apiKey , apiSecret, type) {
 Issue a search query to Discogs database.
 @param {string} query - Search query.
 */
-Discogs.prototype.search = function(query) {
+Gnavi.prototype.search = function(query) {
     if(reg_hira.test(query)){
         var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name_kana=" + encodeURIComponent(query) + "&keyid=" + this.apiKey + "&secret=" + this.apiSecret + "&type=" + this.type);
     }else{
@@ -40,36 +40,9 @@ Discogs.prototype.search = function(query) {
 
 
   for each(var res in rests){
-      var v = res.title.split(" - ");
       res['title'] = res['name'];
       res['desc'] = res['category'] + "\n" + res['code']['areaname_s'];
+      res['thumb'] = res['image_url']['shop_image1'];
   }
   return rests;
-}
-
-
-
-/**
-@param {string} id - The resource identifier.
-*/
-Discogs.prototype.extra = function(id) {
-    var resultJson = http().get("https://api.discogs.com/" + this.type + "s/" + id + "?key=" + this.apiKey + "&secret=" + this.apiSecret);
-    var result = JSON.parse(resultJson.body);
-    if (result.images !== undefined)
-        result['image'] = result.images[0].uri;
-        result['images'] = result.images.map(function(e) { return e.uri; }).join();
-    if (result.videos !== undefined)
-        result['videos'] = result.videos.map(function(e) { return e.uri; }).join();
-    if (result.artists !== undefined)
-        result['artists'] = result.artists.map(function(e) { return e.anv ? e.anv : e.name; }).join();
-    if (result.tracklist !== undefined)
-        result['tracklist'] = result.tracklist.map(function(e) { return e.position + ". " + e.title + " " + e.duration; }).join("\n");
-    if (result.styles !== undefined)
-        result['styles'] = result.styles.join();
-    if (result.genres !== undefined)
-        result['genres'] = result.genres.join();
-    if (result.labels !== undefined)
-        result['label'] = result.labels[0].name;
-
-    return result;
 }
