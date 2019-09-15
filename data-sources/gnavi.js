@@ -26,7 +26,7 @@ function hiraToKata(str){
     });
 }
 
-function Gnavi(apiKey , apiSecret, type) {
+function Gnavi(apiKey) {
     this.apiKey = apiKey;
 }
 
