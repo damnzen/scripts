@@ -26,7 +26,7 @@ function hiraToKata(str){
     });
 }
 
-function Gnavi(apiKey , apiSecret, type) {
+function Gnavi(apiKey) {
     this.apiKey = apiKey;
 }
 
@@ -37,9 +37,9 @@ Issue a search query to Discogs database.
 */
 Gnavi.prototype.search = function(query) {
     if(isHiragana(query)){
-        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name_kana=" + encodeURIComponent(hiraToKata(query) + "&keyid=" + this.apiKey;
+        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name_kana=" + encodeURIComponent(hiraToKata(query)) + "&keyid=" + this.apiKey);
     }else{
-        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name=" + encodeURIComponent(query) + "&keyid=" + this.apiKey;
+        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name=" + encodeURIComponent(query) + "&keyid=" + this.apiKey);
     }
     var json = JSON.parse(result.body);
     var rests = json.rest;
