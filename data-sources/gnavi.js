@@ -34,6 +34,7 @@ function kataToHira(str){
 
 function flatten(o, key){
     var sub = o[key];
+    if(typeof sub == "undefined") return;
     Object.keys(sub).forEach(function(subkey){
         if(Array.isArray(sub[subkey])){
             o[subkey] = sub[subkey].join(',');
@@ -82,6 +83,6 @@ Gnavi.prototype.extra = function(res) {
     flatten(res,'access');
     res['name_kana'] = kataToHira(res['name_kana']);
     res['location'] = res['latitude'] + ',' + res['longitude'];
-    message(res['desc'] + res['location']);
+    //message(res['desc'] + res['location']);
     return res;
 }
