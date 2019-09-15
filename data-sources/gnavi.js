@@ -28,7 +28,7 @@ function hiraToKata(str){
 
 function kataToHira(str){
     if (typeof str == "undefined") return "";
-    return str.replace(/[ぁ-ん]/g, function(s) {
+    return str.replace(/[ァ-ン]/g, function(s) {
         return String.fromCharCode(s.charCodeAt(0) - 0x60);
     });
 }
