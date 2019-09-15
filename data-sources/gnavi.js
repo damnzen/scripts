@@ -71,7 +71,7 @@ Gnavi.prototype.search = function(query) {
       res['title'] = res['name'];
       res['desc'] = res['category'] + "\n" + res['code']['areaname_s'];
       res['thumb'] = res['image_url']['shop_image1'];
-
+        res['id'] = res;
   }
   return rests;
 }
