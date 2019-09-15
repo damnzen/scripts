@@ -11,7 +11,14 @@ var r = discogs.search(query);
 result( r , function(id) { return discogs.extra(id);});
 */
 
-var reg_hira =  /^[\u{3000}-\u{301C}\u{3041}-\u{3093}\u{309B}-\u{309E}]+$/mu;
+function isHiragana(str){
+  str = (str==null)?"":str;
+  if(str.match(/^[ぁ-んー　]*$/)){    //"ー"の後ろの文字は全角スペースです。
+    return true;
+  }else{
+    return false;
+  }
+}
 
 function hiraToKata(str){
     return str.replace(/[ぁ-ん]/g, function(s) {
@@ -29,10 +36,10 @@ Issue a search query to Discogs database.
 @param {string} query - Search query.
 */
 Gnavi.prototype.search = function(query) {
-    if(reg_hira.test(query)){
-        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name_kana=" + encodeURIComponent(query) + "&keyid=" + this.apiKey + "&secret=" + this.apiSecret + "&type=" + this.type);
+    if(isHiragana(query)){
+        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name_kana=" + encodeURIComponent(hiraToKata(query) + "&keyid=" + this.apiKey;
     }else{
-        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name=" + encodeURIComponent(query) + "&keyid=" + this.apiKey + "&secret=" + this.apiSecret + "&type=" + this.type);
+        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name=" + encodeURIComponent(query) + "&keyid=" + this.apiKey;
     }
     var json = JSON.parse(result.body);
     var rests = json.rest;
