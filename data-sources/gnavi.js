@@ -82,6 +82,6 @@ Gnavi.prototype.extra = function(res) {
     flatten(res,'access');
     res['name_kana'] = kataToHira(res['name_kana']);
     res['location'] = res['latitude'] + ',' + res['longitude'];
-    message(res['location']);
+    message(res['desc'] + res['location']);
     return res;
 }
