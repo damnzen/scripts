@@ -26,7 +26,7 @@ function hiraToKata(str){
     });
 }
 
-function kataTohira(str){
+function kataToHira(str){
     return str.replace(/[ぁ-ん]/g, function(s) {
         return String.fromCharCode(s.charCodeAt(0) - 0x60);
     });
@@ -80,7 +80,8 @@ Gnavi.prototype.extra = function(res) {
     flatten(res,'code');
     flatten(res,'pr');
     flatten(res,'access');
-    res['name_kana'] = kataTohira(res['name_kana']);
+    res['name_kana'] = kataToHira(res['name_kana']);
     res['location'] = res['latitude'] + ',' + res['longitude'];
+    message(res['location']);
     return res;
 }
