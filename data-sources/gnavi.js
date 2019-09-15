@@ -26,6 +26,20 @@ function hiraToKata(str){
     });
 }
 
+function flatten(o, key){
+    var sub = o[key];
+    sub.keys.forEach(function(subkey){
+        if(Array.isArray(sub[subkey])){
+            o[subkey] = sub[subkey].join(',');
+        }else if(typeof sub[subkey] == "object"){
+            o[subkey] = flatten(sub, subkey);
+        }else{
+            o[subkey] = sub[subkey]
+        }
+
+    });
+}
+
 function Gnavi(apiKey) {
     this.apiKey = apiKey;
 }
@@ -47,9 +61,13 @@ Gnavi.prototype.search = function(query) {
 
 
   for each(var res in rests){
+      flatten(res,'code');
+      flatten(res,'pr');
+      flatten(res,'access');
       res['title'] = res['name'];
       res['desc'] = res['category'] + "\n" + res['code']['areaname_s'];
       res['thumb'] = res['image_url']['shop_image1'];
+
   }
   return rests;
 }
