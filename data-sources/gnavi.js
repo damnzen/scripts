@@ -26,9 +26,15 @@ function hiraToKata(str){
     });
 }
 
+function kataTohira(str){
+    return str.replace(/[ぁ-ん]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0x60);
+    });
+}
+
 function flatten(o, key){
     var sub = o[key];
-    sub.keys.forEach(function(subkey){
+    Object.keys(sub).forEach(function(subkey){
         if(Array.isArray(sub[subkey])){
             o[subkey] = sub[subkey].join(',');
         }else if(typeof sub[subkey] == "object"){
@@ -61,13 +67,20 @@ Gnavi.prototype.search = function(query) {
 
 
   for each(var res in rests){
-      flatten(res,'code');
-      flatten(res,'pr');
-      flatten(res,'access');
+
       res['title'] = res['name'];
       res['desc'] = res['category'] + "\n" + res['code']['areaname_s'];
       res['thumb'] = res['image_url']['shop_image1'];
 
   }
   return rests;
+}
+
+Gnavi.prototype.extra = function(res) {
+    flatten(res,'code');
+    flatten(res,'pr');
+    flatten(res,'access');
+    res['name_kana'] = kataTohira(res['name_kana']);
+    res['location'] = res['latitude'] + ',' + res['longitude'];
+    return res;
 }
