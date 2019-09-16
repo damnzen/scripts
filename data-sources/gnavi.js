@@ -17,7 +17,7 @@ function Gnavi(apiKey) {
 
 
 Gnavi.prototype.search = function(query) {
-    var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?=freeword" + encodeURIComponent(query.split(" ").join(",")) + "&keyid=" + this.apiKey);
+    var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?freeword=" + encodeURIComponent(query.replace(/[\s]+/g,',')) + "&keyid=" + this.apiKey);
     // if(isHiragana(query)){
     //     var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name_kana=" + encodeURIComponent(hiraToKata(query)) + "&keyid=" + this.apiKey);
     // }else{
@@ -26,7 +26,7 @@ Gnavi.prototype.search = function(query) {
     var json = JSON.parse(result.body);
     var rests = json.rest;
   //var rests = json1.rest.concat(json2.rest)
-
+  if (!rests) return;
 
   rests.forEach((res,idx) =>{
       res['title'] = res['name'];
