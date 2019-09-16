@@ -43,7 +43,8 @@ Gnavi.prototype.extra = function(res) {
     flatten(res,'image_url');
     res['name_kana'] = kataToHira(res['name_kana']);
     res['location'] = res['latitude'] + ',' + res['longitude'];
-    if('image_url' in res) res['images'] = Object.values(res['image_url']);
+    //if('image_url' in res) res['images'] = Object.values(res['image_url']);
+    res['images'] = [res['image_url']['shop_image1'],res['image_url']['shop_image']].filter((e) => {return e}).join(',');
     //message(res['desc'] + res['location']);
     return res;
 }
