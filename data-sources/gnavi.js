@@ -17,11 +17,12 @@ function Gnavi(apiKey) {
 
 
 Gnavi.prototype.search = function(query) {
-    if(isHiragana(query)){
-        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name_kana=" + encodeURIComponent(hiraToKata(query)) + "&keyid=" + this.apiKey);
-    }else{
-        var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name=" + encodeURIComponent(query) + "&keyid=" + this.apiKey);
-    }
+    var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?=freeword" + encodeURIComponent(query.split(" ").join(",")) + "&keyid=" + this.apiKey);
+    // if(isHiragana(query)){
+    //     var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name_kana=" + encodeURIComponent(hiraToKata(query)) + "&keyid=" + this.apiKey);
+    // }else{
+    //     var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?name=" + encodeURIComponent(query) + "&keyid=" + this.apiKey);
+    // }
     var json = JSON.parse(result.body);
     var rests = json.rest;
   //var rests = json1.rest.concat(json2.rest)
@@ -43,6 +44,7 @@ Gnavi.prototype.extra = function(res) {
     flatten(res,'image_url');
     res['name_kana'] = kataToHira(res['name_kana']);
     res['location'] = res['latitude'] + ',' + res['longitude'];
+    res['images'] = Object.values(res['image_url']);
     //message(res['desc'] + res['location']);
     return res;
 }
