@@ -15,7 +15,6 @@ function Gnavi(apiKey) {
     this.apiKey = apiKey;
 }
 
-
 Gnavi.prototype.search = function(query) {
     var result = http().get("https://api.gnavi.co.jp/RestSearchAPI/v3/?freeword=" + encodeURIComponent(query.replace(/[\s]+/g,',')) + "&keyid=" + this.apiKey);
     // if(isHiragana(query)){
