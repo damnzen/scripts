@@ -40,6 +40,7 @@ Gnavi.prototype.extra = function(res) {
     flatten(res,'code');
     flatten(res,'pr');
     flatten(res,'access');
+    flatten(res,'image_url');
     res['name_kana'] = kataToHira(res['name_kana']);
     res['location'] = res['latitude'] + ',' + res['longitude'];
     //message(res['desc'] + res['location']);
