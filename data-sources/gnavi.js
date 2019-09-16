@@ -68,13 +68,12 @@ Gnavi.prototype.search = function(query) {
   //var rests = json1.rest.concat(json2.rest)
 
 
-  for each(var res in rests){
-
+  rests.forEach((res,idx) =>{
       res['title'] = res['name'];
       res['desc'] = res['category'] + "\n" + res['code']['areaname_s'];
       res['thumb'] = res['image_url']['shop_image1'];
-        res['id'] = res;
-  }
+        res['id'] = idx;
+  });
   return rests;
 }
 
