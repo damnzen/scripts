@@ -39,7 +39,7 @@ Kakaku.prototype.extra = function (item) {
   var result = http().get('http://kakaku.com/item/' + item.ProductID + '/');
   //var body = ECL.charset.convert(result.body, "Unicode", "SJIS");
   var body = result.body;
-  var matches = body.match(/onclick="cmc\(.*>/g);
+  var matches = body.match(/<div class="p-PTShop_btn">\s\s<a onclick="cmc\(.*>/g);
   //var item = {};
   item["shops"] = [];
   if (matches){
