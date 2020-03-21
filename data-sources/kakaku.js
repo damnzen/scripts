@@ -8,7 +8,6 @@ function Kakaku(apiKey) {
 Kakaku.prototype.search = function (query) {
   var url = 'http://api.kakaku.com/WebAPI/ItemSearch/Ver1.0/ItemSearch.aspx?ApiKey=' + this.apiKey + '&Keyword=' + encodeURIComponent(query) + '&CategoryGroup=ALL&HitNum=20';
   var result = http().get(jsonUrl(url));
-  //log(result.body);
   var json = JSON.parse(result.body);
 //log(result.body);
 //log(json.query.results.ProductInfo);
@@ -36,26 +35,30 @@ Kakaku.prototype.search = function (query) {
 }
 
 Kakaku.prototype.extra = function (item) {
-  var result = http().get('http://kakaku.com/item/' + item.ProductID + '/');
+  item["shops"] = Kakaku.prototype.getShops(item.ProductID);
+  item["id"] = null;
+  return item
+}
+
+Kakaku.prototype.getShops = function (productID) {
+  var result = http().get('http://kakaku.com/item/' + productID + '/');
   //var body = ECL.charset.convert(result.body, "Unicode", "SJIS");
   var body = result.body;
   var matches = body.match(/<div class="p-PTShop_btn">\s\s<a onclick="cmc\(.*>/g);
-  //var item = {};
-  item["shops"] = [];
+  var shops = [];
   if (matches){
-  for each(var match in matches) {
-    if (/shpbid:(\d+),shpkey:(\d+),shpname:'(.*?)'/.test(match)) {
-      shop = {};
-      shop['price'] = RegExp.$1;
-      shop['id'] = RegExp.$2;
-      shop['name'] = RegExp.$3;
+    for each(var match in matches) {
+      if (/shpbid:(\d+),shpkey:(\d+),shpname:'(.*?)'/.test(match)) {
+        shop = {};
+        shop['price'] = RegExp.$1;
+        shop['id'] = RegExp.$2;
+        shop['name'] = RegExp.$3;
+      }
+      if (/Url=(.*?)&/.test(match)) {
+        shop['url'] = decodeURIComponent(RegExp.$1);
+      }
+      shops.push(shop);
     }
-    if (/Url=(.*?)&/.test(match)) {
-      shop['url'] = decodeURIComponent(RegExp.$1);
-    }
-    item.shops.push(shop);
   }
-  }
-  item["id"] = null;
-  return item
+  return shops
 }
