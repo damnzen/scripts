@@ -1,4 +1,4 @@
-function jsonURL(url) {
+function jsonUrl(url) {
 	return 'https://script.google.com/macros/s/AKfycbxRjzQftnEWO7fwETplJpsJMC79UTlXCQGSYjmdac3vHGJYFida/exec?url=' + encodeURIComponent(url);
 }
 
