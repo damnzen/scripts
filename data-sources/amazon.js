@@ -39,6 +39,7 @@ Amazon.prototype.search = function(query){
 			"id" : m[1],
 			"title" : cleanTitle(decNumRefToString(m[2])),
 			"desc" : m[3],
+			"seller" : m[3],
 			"thumb" : "http://images-jp.amazon.com/images/P/" + m[1] + ".09.THUMBZZZ.jpg",
 			"image" : "http://images-jp.amazon.com/images/P/" + m[1] + ".09.LZZZZZZZ.jpg",
 		};
