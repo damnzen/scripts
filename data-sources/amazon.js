@@ -1,4 +1,3 @@
-
 function decNumRefToString(decNumRef) {
 	return decNumRef.replace(/&#(\d+);/ig, function(match, $1, idx, all) {
 		return String.fromCharCode($1);
@@ -9,12 +8,31 @@ function cleanTitle(title){
 	return title.replace(/【.*?】/g,"")
 }
 
+function getProductCode(title){
+	var m = 	title.match(/[0-9A-Z\-]{6,}/g);
+	if (m){
+	 return m[m.length-1]
+	}else{
+	 return ""
+	}
+}
+
+function getAmount(title){
+	var m = 	name.match(/\d+(ml|mL|ML|g)/g);
+	if (m){
+	 return m[m.length-1]
+	}else{
+	 return ""
+	}
+}
 
 function Amazon () {
 }
 
 Amazon.prototype.autocomp = function(query) {
-	var result = http().get("http://completion.amazon.co.jp/search/complete?mkt=6&method=completion&search-alias=aps&q=" + encodeURIComponent(query));
+	var req = http();
+//	req.headers({"User-Agent": "D501i DoCoMo/1.0/D501"});
+	var result = req.get("http://completion.amazon.co.jp/search/complete?mkt=6&method=completion&search-alias=aps&q=" + encodeURIComponent(query));
 	var json = JSON.parse(result.body);
 	var resultArray = [];
 	for each(var i in json[1]){
@@ -27,25 +45,33 @@ Amazon.prototype.search = function(query){
 	var url = "https://www.amazon.co.jp/s?k=" + query;
 	var req = http();
 	//http.headers({"User-Agent": "Mozilla/5.0 (iPhone; CPU OS 10_14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Mobile/14E304 Safari/605.1.15"});
-	req.headers({"User-Agent": "D501i DoCoMo/1.0/D5" + new Date().getSeconds()});
+	req.headers({"User-Agent": "D501i DoCoMo/1.0/D501"});
+req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Mobile Safari/537.36"});
+//req.headers({"User-Agent": "Opera/9.80 (Android; Opera Mini/8.0.1807/36.1609; U; en) Presto/2.12.423 Version/12.16"});
+	//req.headers({"User-Agent": ("D501i DoCoMo/1.0/D5" + new Date().getSeconds()).toString()});
 	var res = req.get(url);
-	//log(result.body);
-	var regexp = /"\/gp\/aw\/d\/([A-Z0-9]*)\/.*\n    (.*)<\/a>\n<br \/><font size="-1">(.*)<\/font>/gm
-
+	var v = res.body.split('<div data-asin');
+	v.shift();
+	v.pop();
+	var regexp = /<img src="(.*)"[\s\S]*?alt="(.*)"/;
 	var resultArray = [];
 	var o;
-	while(m = regexp.exec(res.body)){
+	v.forEach(div=>{
+		//log(div);
+		if(!/^="([A-Z0-9]+)/.test(div)) return;
+		var asin = RegExp.$1;
+		var m = div.match(regexp);
+		if (!m) return;
+		//log(/<img src="(.*)"[\s\S]*?alt="(.*)"/.exec(div));
 		o = {
-			"id" : m[1],
-			"title" : cleanTitle(decNumRefToString(m[2])),
-			"desc" : m[3],
-			"seller" : m[3],
-			"thumb" : "http://images-jp.amazon.com/images/P/" + m[1] + ".09.THUMBZZZ.jpg",
-			"image" : "http://images-jp.amazon.com/images/P/" + m[1] + ".09.LZZZZZZZ.jpg",
+			"id" : asin,
+			"title" : cleanTitle(m[2]),
+			"desc" : getProductCode(m[2]),
+			"thumb" : m[1],
+			"image" : "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg",
 		};
-		resultArray.push(o);
-		//log("■" + m[2]);
-	}
+			resultArray.push(o);			
+	});
 
 	return resultArray;
 	//log(resultArray);
