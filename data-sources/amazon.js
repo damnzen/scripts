@@ -25,10 +25,10 @@ Amazon.prototype.autocomp = function(query) {
 
 Amazon.prototype.search = function(query){
 	var url = "https://www.amazon.co.jp/s?k=" + query;
-	var http = http();
+	var req = http();
 	//http.headers({"User-Agent": "Mozilla/5.0 (iPhone; CPU OS 10_14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Mobile/14E304 Safari/605.1.15"});
-	http.headers({"User-Agent": "D501i DoCoMo/1.0/D5" + new Date().getSeconds()});
-	var res = http.get(url);
+	req.headers({"User-Agent": "D501i DoCoMo/1.0/D5" + new Date().getSeconds()});
+	var res = req.get(url);
 	//log(result.body);
 	var regexp = /"\/gp\/aw\/d\/([A-Z0-9]*)\/.*\n    (.*)<\/a>\n<br \/><font size="-1">(.*)<\/font>/gm
 
