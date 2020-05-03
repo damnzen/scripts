@@ -26,6 +26,10 @@ function getAmount(title){
 	}
 }
 
+function imageFromThumb(thumb){
+	return thumb.replace(/_AC.*_\./,"")
+}
+
 function Amazon () {
 }
 
@@ -68,7 +72,8 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 			"title" : cleanTitle(m[2]),
 			"desc" : getProductCode(m[2]),
 			"thumb" : m[1],
-			"image" : "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg",
+			"image" : imageFromThumb(m[1]),
+//			"image" : "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg",
 		};
 			resultArray.push(o);			
 	});
