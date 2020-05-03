@@ -1,22 +1,18 @@
-/**
-The data source for obtaining information from discogs.com.
-@param {string} apiKey - Consumer key.
-@param {string} apiSecret - Consumer secret. 
-@param {string} type - One of release, master, artist.
-Consumer key and Consumer secret can be obtained by this link : https://www.discogs.com/settings/developers
-More info about Discogs API see here: https://www.discogs.com/developers
-@example 
-var discogs = new Discogs("Consumer key" ,"Consumer secret" , "release" );
-var r = discogs.search(query);
-result( r , function(id) { return discogs.extra(id);});
-*/
+
+function decNumRefToString(decNumRef) {
+	return decNumRef.replace(/&#(\d+);/ig, function(match, $1, idx, all) {
+		return String.fromCharCode($1);
+	});
+}
+
+function cleanTitle(title){
+	return title.replace(/【.*?】/g,"")
+}
+
+
 function Amazon () {
 }
 
-/**
-Issue a search query to Discogs database.
-@param {string} query - Search query.
-*/
 Amazon.prototype.autocomp = function(query) {
 	var result = http().get("http://completion.amazon.co.jp/search/complete?mkt=6&method=completion&search-alias=aps&q=" + encodeURIComponent(query));
 	var json = JSON.parse(result.body);
@@ -26,6 +22,35 @@ Amazon.prototype.autocomp = function(query) {
 	}
 	return resultArray
 }
+
+Amazon.prototype.search = function(query){
+	var url = "https://www.amazon.co.jp/s?k=" + query;
+	var http = http();
+	//http.headers({"User-Agent": "Mozilla/5.0 (iPhone; CPU OS 10_14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Mobile/14E304 Safari/605.1.15"});
+	http.headers({"User-Agent": "D501i DoCoMo/1.0/D5" + new Date().getSeconds()});
+	var res = http.get(url);
+	//log(result.body);
+	var regexp = /"\/gp\/aw\/d\/([A-Z0-9]*)\/.*\n    (.*)<\/a>\n<br \/><font size="-1">(.*)<\/font>/gm
+
+	var resultArray = [];
+	var o;
+	while(m = regexp.exec(res.body)){
+		o = {
+			"id" : m[1],
+			"title" : cleanTitle(decNumRefToString(m[2])),
+			"desc" : m[3],
+			"thumb" : "http://images-jp.amazon.com/images/P/" + m[1] + ".09.THUMBZZZ.jpg",
+			"image" : "http://images-jp.amazon.com/images/P/" + m[1] + ".09.LZZZZZZZ.jpg",
+		};
+		resultArray.push(o);
+		//log("■" + m[2]);
+	}
+
+	return resultArray;
+	//log(resultArray);
+}
+
+/*
 
 Amazon.prototype.amazlet = function(query) {
 	var result = http().get("http://app.bloghackers.net/amazlet/?type=all&__mode=keywordsearch&locale=jp&keyword=" + encodeURIComponent(query));
@@ -54,6 +79,8 @@ Amazon.prototype.amazlet = function(query) {
 	}
 	return resultArray
 }
+
+*/
 
 Amazon.prototype.rss = function(query) {
 	var parser = new XMLParser();
