@@ -1,5 +1,5 @@
 var MyUtil = {
-//	DEFAULT_BROWSER : "arun.com.chromer",
+	//DEFAULT_BROWSER : "arun.com.chromer",
 	
     browse : function(url, pkg, cls){
 //		if(!pkg) pkg = this.DEFAULT_BROWSER;
