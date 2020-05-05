@@ -1,9 +1,14 @@
 var MyUtil = {
-	DEFAULT_BROWSER : "arun.com.chromer",
+//	DEFAULT_BROWSER : "arun.com.chromer",
 	
-    browse : function(url,pkg,cls){
-		if(!pkg) pkg = this.DEFAULT_BROWSER;
-		var link = "android-app://" + pkg + "/" + url.replace("://", "/");
+    browse : function(url, pkg, cls){
+//		if(!pkg) pkg = this.DEFAULT_BROWSER;
+	    	var link;
+		if(pkg){
+			link = "android-app://" + pkg + "/" + url.replace("://", "/");
+		}else{
+			link = url
+		}
 
 		var i = intent("android.intent.action.VIEW");
 		i.data(url);
