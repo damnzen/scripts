@@ -28,7 +28,3 @@ OpenBD.prototype.lookup = function(isbn) {
 	}
 	return o;
 }
-
-var openbd = new OpenBD();
-var r = openbd.lookup(query);
-result(r);
