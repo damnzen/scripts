@@ -14,9 +14,9 @@ OpenBD.prototype.lookup = function(isbn) {
 
 	var o = json[0]["onix"];
 	o["title"] = o["DescriptiveDetail"]["TitleDetail"]["TitleElement"]["TitleText"]["content"];
-	o["Author"] = o["DescriptiveDetail"]["Contributor"].map(e => e["PersonName"]["content"]).join(", ");
-	o["Publisher"] = o["PublishingDetail"]["Imprint"].ImprintName;
-	o["PublishedDate"] = this.convertDate(o["PublishingDetail"].PublishingDate[0]["Date"]);
+	o["author"] = o["DescriptiveDetail"]["Contributor"].map(e => e["PersonName"]["content"]).join(", ");
+	o["publisher"] = o["PublishingDetail"]["Imprint"].ImprintName;
+	o["publishedDate"] = this.convertDate(o["PublishingDetail"].PublishingDate[0]["Date"]);
 	o["pageCount"] = o["DescriptiveDetail"].Extent[0].ExtentValue;
 	o["description"] = o["CollateralDetail"].TextContent[0].Text;
 	o["isbn"] = o.RecordReference;
