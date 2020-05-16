@@ -33,10 +33,12 @@ Filmarks.prototype.lookup = function(id, limit){
   //flatten(r, "movie");
   Object.assign(r, r["movie"]);
   r["filmarksurl"] = "https://filmarks.com/movies/" + id;
-  r["director"] = r["credits"].find(e => e.roleName == "?ēﾂ").people[0].name;
-  var actors = r["credits"].find(e => e.roleName == "?L???X?g");
-  if(actors) r["actors"] = actors.people.map(e => e.name);
-  if(r["originalImagePath"]) r["image"] = r["originalImagePath"].replace("/store/", "/store/fit/1000/1000/");
+  var director = r["credits"].find(e => e.roleName == "監督");
+  if (director) r["director"] = director.people[0].name;
+  
+  var actors = r["credits"].find(e => e.roleName == "キャスト");
+  if (actors) r["actors"] = actors.people.map(e => e.name);
+  if (r["originalImagePath"]) r["image"] = r["originalImagePath"].replace("/store/", "/store/fit/1000/1000/");
   r["vodServices"].forEach(e =>{
                            if (e.serviceTypes.includes("svod")) r[e["name"]] = e["link"];
 });
