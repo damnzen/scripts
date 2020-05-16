@@ -52,7 +52,7 @@ Filmarks.prototype.lookup = function(id, limit){
   if (actors) r["actors"] = actors.people.map(e => e.name);
   if (r["originalImagePath"]) r["image"] = r["originalImagePath"].replace("/store/", "/store/fit/1000/1000/");
   r["vodServices"].forEach(e =>{
-                           if (e.serviceTypes.includes("svod")) r[e["name"]] = e["link"];
+                           if (e.serviceTypes.indexOf("svod")>=0) r[e["name"]] = e["link"];
 });
 return r
 }
