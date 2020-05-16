@@ -33,6 +33,7 @@ Filmarks.prototype.lookup = function(id, limit){
   //flatten(r, "movie");
   Object.assign(r, r["movie"]);
   r["filmarksurl"] = "https://filmarks.com/movies/" + id;
+  r["copyright"] = r["copyright"] || "";
   var director = r["credits"].find(e => e.roleName == "監督");
   if (director) r["director"] = director.people[0].name;
   
