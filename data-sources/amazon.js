@@ -73,7 +73,7 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 			"desc" : getProductCode(m[2]),
 			"thumb" : m[1],
 			"image" : imageFromThumb(m[1]),
-			"url" : "https://www.amaozn.co.jp/o/ASIN/" + asin + "/",
+			"url" : "https://www.amazon.co.jp/o/ASIN/" + asin + "/",
 //			"image" : "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg",
 		};
 			resultArray.push(o);			
