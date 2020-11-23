@@ -69,6 +69,7 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 		//log(/<img src="(.*)"[\s\S]*?alt="(.*)"/.exec(div));
 		o = {
 			"id" : asin,
+			"asin" : asin,
 			"title" : cleanTitle(m[2]),
 			"desc" : getProductCode(m[2]),
 			"thumb" : m[1],
