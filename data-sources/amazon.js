@@ -95,7 +95,7 @@ Amazon.prototype.searchForId = function(query){
   return resultArray.map(item =>{item.title = item.id; return item})
 }
 
-Amazon.prototype.extra = function(asin){
+Amazon.prototype.extra = function(asin, getfull){
   var url = "https://www.amazon.co.jp/dp/" + asin;
   var req = http();
   var res = req.get(url);
@@ -111,6 +111,14 @@ Amazon.prototype.extra = function(asin){
   if(/<span id="priceblock_ourprice".*>￥(.*)<\/span>/.test(res.body)){
     o.price = parseInt(RegExp.$1.replace(",", ""));
   }
+  if(getfull){
+    o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
+    o.amazonUrl = "https://www.amazon.co.jp/o/ASIN/" + asin + "/";
+    if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
+      o.title = cleanTitle(RegExp.$1);
+    }
+  }
+  
   return o;
 }
 
