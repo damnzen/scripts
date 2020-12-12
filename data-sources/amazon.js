@@ -90,6 +90,11 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 	//log(resultArray);
 }
 
+Amazon.prototype.searchForId = function(query){
+  var resultArray = this.search(query);
+  return resultArray.map(item =>{item.title = item.id; return item})
+}
+
 Amazon.prototype.extra = function(asin){
   var url = "https://www.amazon.co.jp/dp/" + asin;
   var req = http();
