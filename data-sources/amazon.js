@@ -90,6 +90,25 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 	//log(resultArray);
 }
 
+Amazon.prototype.extra = function(asin){
+  var url = "https://www.amazon.co.jp/dp/" + asin;
+  var req = http();
+  var res = req.get(url);
+  
+  var o = {};
+  if(/<div id="featurebullets_feature_div"[\s\S]*<!--  Loading EDP related metadata -->/.test(res.body)){
+    //Logger.log(RegExp.lastMatch);
+    o.comment = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "");
+  }
+  if(/メーカー\n:\n<\/span>\n<span>(.*)<\/span>/.test(res.body)){
+    o.maker = RegExp.$1;
+  }
+  if(/<span id="priceblock_ourprice".*>￥(.*)<\/span>/.test(res.body)){
+    o.price = parseInt(RegExp.$1.replace(",", ""));
+  }
+  return o;
+}
+
 /*
 Amazon.prototype.amazlet = function(query) {
 	var result = http().get("http://app.bloghackers.net/amazlet/?type=all&__mode=keywordsearch&locale=jp&keyword=" + encodeURIComponent(query));
