@@ -57,9 +57,74 @@ Kakaku.prototype.extra = function (id) {
   return json
 }
 
-Kakaku.prototype.shops = function (id) {
-  var url = 'https://app.kakaku.com/shoplist/v2/' + id + '/?page=1&per_page=1000000&type=0';
+Kakaku.prototype.shops = function (id, order, area) {
+  var url = 'https://app.kakaku.com/shoplist/v2/' + id + '/?page=1&per_page=1000000&type=0&priceorder=' + order + '&carriagearea=' + area;
   var result = http().get(url);
   var shops = JSON.parse(result.body);
   return shops;
 }
+/*
+Kakaku.prototype.search = function (query) {
+  var url = 'http://api.kakaku.com/WebAPI/ItemSearch/Ver1.0/ItemSearch.aspx?ApiKey=' + this.apiKey + '&Keyword=' + encodeURIComponent(query) + '&CategoryGroup=ALL&HitNum=20';
+  var result = http().get(jsonUrl(url));
+  var json = JSON.parse(result.body);
+  //log(result.body);
+  //log(json.query.results.ProductInfo);
+  var results = json["ProductInfo"];
+  var items;
+  if (!results){
+    items = [];
+  }else if (results.NumOfResult == 1){
+    items = [results.Item];
+  }else{
+    items = results.Item;
+  }
+  items.forEach(item => {
+    //log(item);
+    item['title'] = item.ProductName;
+    item['desc'] = [
+      item.MakerName,
+      item.CategoryName
+    ].join(' ');
+    
+    item['thumb'] = item.ImageUrl;
+    item['image'] = item.ImageUrl.replace("/m/", "/fullscale/");
+    //item['id'] = item.ProductID;
+    item['id'] = item;
+  });
+  return items;
+}
+
+Kakaku.prototype.extra = function (item) {
+  item["shops"] = Kakaku.prototype.getShops(item.ProductID);
+  item["id"] = null;
+  return item
+}
+
+Kakaku.prototype.getShops = function (productID) {
+  var result = http().get('http://kakaku.com/item/' + productID + '/');
+  //var body = ECL.charset.convert(result.body, "Unicode", "SJIS");
+  var body = result.body;
+  var matches = body.match(/<div class="p-PTShop_btn">\s\s<a onclick="cmc\(.*>/g);
+  var shops = [];
+  if (matches){
+    matches.forEach(match => {
+      if (/shpbid:(\d+),shpkey:(\d+),shpname:'(.*?)'/.test(match)) {
+        shop = {};
+        shop['price'] = RegExp.$1;
+        shop['id'] = RegExp.$2;
+        shop['name'] = RegExp.$3;
+      }
+      if (/Url=(.*?)&/.test(match)) {
+        shop['url'] = decodeURIComponent(RegExp.$1);
+      }
+      shops.push(shop);
+    });
+  }
+  return shops
+}
+*/
+
+//---------------------
+
+
