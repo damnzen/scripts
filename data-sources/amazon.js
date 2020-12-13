@@ -8,17 +8,10 @@ function cleanTitle(title){
 	return title.replace(/【.*?】|\[.*?\]|〔 .*?〕/g,"")
 }
 
-function getProductCode(title){
-	var m = 	title.match(/(?=.*[0-9])[\-A-Z0-9]{6,}/g);
-	if (m){
-	 return m[m.length-1]
-	}else{
-	 return ""
-	}
-}
+
 
 function getAmount(title){
-	var m = 	name.match(/\d+(ml|mL|ML|g)/g);
+	var m = name.match(/\d+(ml|mL|ML|g)/g);
 	if (m){
 	 return m[m.length-1]
 	}else{
@@ -28,6 +21,20 @@ function getAmount(title){
 
 function imageFromThumb(thumb){
 	return thumb.replace(/_AC.*_\./,"")
+}
+
+function getSpec(body, name){
+  var maker
+  var re2 = new RegExp(name + '\n<\/th>\n+<td class="a-size-base">\n(.*)\n<\/td>')
+  var re1 = new RegExp(name + "\n:\n<\/span>\n<span>(.*)<\/span>")
+  if(re1.test(body)){
+    maker = RegExp.$1;
+  }else if(re2.test(body)){
+    maker = RegExp.$1;
+  }else{
+    maker = ""
+  }
+  return maker
 }
 
 function Amazon () {
@@ -73,6 +80,7 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 		if (image.indexOf("//")==0) return;
 		//log(/<img src="(.*)"[\s\S]*?alt="(.*)"/.exec(div));
 		o = {
+          "source" : "amazon",
 			"id" : asin,
 			"asin" : asin,
 			"title" : title,
@@ -105,9 +113,13 @@ Amazon.prototype.extra = function(asin, getfull){
     //Logger.log(RegExp.lastMatch);
     o.comment = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "");
   }
-  if(/メーカー\n:\n<\/span>\n<span>(.*)<\/span>/.test(res.body)){
-    o.maker = RegExp.$1;
-  }
+  o.maker = getSpec(res.body, "メーカー");
+  var d = getSpec(res.body, "Amazon.co.jp での取り扱い開始日");
+  if(d) o.salesDate = new Date(d);
+  o.productCode = getSpec(res.body, "型番");
+//  if(/メーカー\n:\n<\/span>\n<span>(.*)<\/span>/.test(res.body)){
+//    o.maker = RegExp.$1;
+//  }
   if(/<span id="priceblock_ourprice".*>￥(.*)<\/span>/.test(res.body)){
     o.price = parseInt(RegExp.$1.replace(",", ""));
   }
