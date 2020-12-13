@@ -40,12 +40,16 @@ Kakaku.prototype.extra = function (id) {
   var result = http().get(url);
   var json = JSON.parse(result.body);
 
+  //親アイテムがある場合
+  if(json.product.parentProduct) return this.extra(json.product.parentProduct.productID);
+  
 //  var url = 'https://app.kakaku.com/productspec/v1/' + id + '/';
 //  var result = http().get(url);
 //  var data_spec = JSON.parse(result.body);
  
   Object.assign(json, json.product);
-  //json["image"] = json.img.mainImg.url.view;
+  json["title"] = json.productName;
+  json["image"] = json.img.mainImg.url.view;
   json["kakakuUrl"] = json.shareMessages.url;
   json["productCode"] = getProductCode(json.product.productName);
   //if (json.salesDate) json["salesDate"] = Date.parse(json.salesDate.replace(/[年月日]/g, "/"));
@@ -58,83 +62,4 @@ Kakaku.prototype.shops = function (id) {
   var result = http().get(url);
   var shops = JSON.parse(result.body);
   return shops;
-}
-/*
-Kakaku.prototype.search = function (query) {
-  var url = 'http://api.kakaku.com/WebAPI/ItemSearch/Ver1.0/ItemSearch.aspx?ApiKey=' + this.apiKey + '&Keyword=' + encodeURIComponent(query) + '&CategoryGroup=ALL&HitNum=20';
-  var result = http().get(jsonUrl(url));
-  var json = JSON.parse(result.body);
-  //log(result.body);
-  //log(json.query.results.ProductInfo);
-  var results = json["ProductInfo"];
-  var items;
-  if (!results){
-    items = [];
-  }else if (results.NumOfResult == 1){
-    items = [results.Item];
-  }else{
-    items = results.Item;
-  }
-  items.forEach(item => {
-    //log(item);
-    item['title'] = item.ProductName;
-    item['desc'] = [
-      item.MakerName,
-      item.CategoryName
-    ].join(' ');
-    
-    item['thumb'] = item.ImageUrl;
-    item['image'] = item.ImageUrl.replace("/m/", "/fullscale/");
-    //item['id'] = item.ProductID;
-    item['id'] = item;
-  });
-  return items;
-}
-
-Kakaku.prototype.extra = function (item) {
-  item["shops"] = Kakaku.prototype.getShops(item.ProductID);
-  item["id"] = null;
-  return item
-}
-
-Kakaku.prototype.getShops = function (productID) {
-  var result = http().get('http://kakaku.com/item/' + productID + '/');
-  //var body = ECL.charset.convert(result.body, "Unicode", "SJIS");
-  var body = result.body;
-  var matches = body.match(/<div class="p-PTShop_btn">\s\s<a onclick="cmc\(.*>/g);
-  var shops = [];
-  if (matches){
-    matches.forEach(match => {
-      if (/shpbid:(\d+),shpkey:(\d+),shpname:'(.*?)'/.test(match)) {
-        shop = {};
-        shop['price'] = RegExp.$1;
-        shop['id'] = RegExp.$2;
-        shop['name'] = RegExp.$3;
-      }
-      if (/Url=(.*?)&/.test(match)) {
-        shop['url'] = decodeURIComponent(RegExp.$1);
-      }
-      shops.push(shop);
-    });
-  }
-  return shops
-}
-*/
-
-//---------------------
-
-
-function test2(){
-  var kkk = new Kakaku("b0572c65d75b8edf330bf88354b8d761");
-  var r = kkk.extra("K0001278149");
-  //var r = kkk.extra("K0000958768");
-  Logger.log(r);
-
-}
-
-function test1(){
-  var a = 1;
-  var kkk = new Kakaku("b0572c65d75b8edf330bf88354b8d761");
-  var r = kkk.search("ニベアサン");
-  Logger.log(r);
 }
