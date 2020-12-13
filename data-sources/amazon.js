@@ -9,7 +9,7 @@ function cleanTitle(title){
 }
 
 function getProductCode(title){
-	var m = 	title.match(/[0-9A-Z\-]{6,}/g);
+	var m = 	title.match(/(?=.*[0-9])[\-A-Z0-9]{6,}/g);
 	if (m){
 	 return m[m.length-1]
 	}else{
