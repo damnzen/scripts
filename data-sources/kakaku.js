@@ -60,7 +60,7 @@ Kakaku.prototype.extra = function (id) {
 Kakaku.prototype.shops = function (id, order, area) {
   var url = 'https://app.kakaku.com/shoplist/v2/' + id + '/?page=1&per_page=1000000&type=0';
   if(order) url += '&priceorder=' + order;
-  if(area) '&carriagearea=' + area;
+  if(area) url += '&carriagearea=' + area;
   
   var result = http().get(url);
   var shops = JSON.parse(result.body);
