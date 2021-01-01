@@ -26,7 +26,7 @@ Filmarks.prototype.autocompleteForUrl= function(query){
 Filmarks.prototype.autocompleteForId= function(query){
   var rs = this.autocomplete(query);
   var rs2 = rs.map(r => ({
-         title : r["id"],
+         title : "movies/" + r["id"],
          thumb : r["imagePath"],
          desc : r["title"],
                    id : r["id"],
