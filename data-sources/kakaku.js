@@ -12,8 +12,8 @@ function cleanUrl(url){
 	  url = decodeURIComponent(RegExp.$1);
 	  if(/\?url=(.*)/.test(url)){ //Amazon対応
 	    url = decodeURIComponent(RegExp.$1);
-	    url = url.replace(/\?.*/, '');
 	  }
+    url = url.replace(/\?.*/, '');
 	  return url;
 	}else{
 		return ""
