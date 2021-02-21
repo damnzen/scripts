@@ -7,6 +7,18 @@ function getProductCode(title){
 	}
 }
 
+function cleanUrl(url){
+	if (/&Url=([^&]*)/.test(url)){
+	  url = decodeURIComponent(RegExp.$1);
+	  if(/\?url=(.*)/.test(url)){ //Amazon対応
+	    url = decodeURIComponent(RegExp.$1);
+	    url = url.replace(/\?.*/, '');
+	  }
+	  return url;
+	}else{
+		return ""
+	}
+}
 
 function Kakaku(apiKey) {
   this.apiKey = apiKey;
@@ -60,4 +72,30 @@ Kakaku.prototype.shops = function (id, order, area) {
   var result = http().get(url);
   var shops = JSON.parse(result.body);
   return shops;
+}
+
+Kakaku.prototype.shopsWeb = function (productID) {
+  var result = http().get('http://kakaku.com/item/' + productID + '/');
+  //var body = ECL.charset.convert(result.body, "Unicode", "SJIS");
+  var body = result.body;
+  var matches = body.match(/<div class="p-PTShop_btn">\s\s<a onclick="cmc\(.*>/g);
+  var shops = [];
+  if (matches){
+    matches.forEach(match => {
+      if (/shpbid:(\d+),shpkey:(\d+),shpname:'(.*?)'/.test(match)) {
+        shop = {};
+        shop['price'] = RegExp.$1;
+        shop['id'] = RegExp.$2;
+        shop['shopName'] = RegExp.$3;
+      }
+      //Logger.log(match);
+      if(/href="(.+?)"/.test(match)) shop["cpcUrl"] = RegExp.$1;
+      // if (/&Url=(.*?)&/.test(match)) {
+      //   shop['url'] = decodeURIComponent(RegExp.$1);
+      //   //shop['url'] = cleanAmazonUrl(shop['url']);
+      // }
+      shops.push(shop);
+    });
+  }
+  return shops
 }
