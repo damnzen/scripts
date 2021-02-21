@@ -44,7 +44,7 @@ Kakaku.prototype.extra = function (id) {
  
   Object.assign(json, json.product);
   json["title"] = json.productName;
-  json["image"] = json.img ? json.img.mainImg.url.view : null;
+  json["image"] = json.img ? json.img.mainImg.url.view : "";
   json["kakakuUrl"] = json.shareMessages.url;
   json["productCode"] = getProductCode(json.product.productName);
   //if (json.salesDate) json["salesDate"] = Date.parse(json.salesDate.replace(/[年月日]/g, "/"));
