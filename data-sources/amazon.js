@@ -26,7 +26,7 @@ function imageFromThumb(thumb){
 function getSpec(body, name){
   var maker
 
-  var re0 = /<table id="productDetails.*?<\/table>/gs;
+  var re0 = /<table id="productDetails[\s\S]*?<\/table>/g;
   var tables = body.match(re0);
   //console.log(tables);
   if(tables){
@@ -39,7 +39,7 @@ function getSpec(body, name){
     }else{
       maker = "";
     }
-  }else if((/<div id="detailBullets_feature_div">(.*)<\/div>/s).test(body)){
+  }else if((/<div id="detailBullets_feature_div">([\s\S]*)<\/div>/).test(body)){
     
     var table = RegExp.$1;
     var re = new RegExp(name + "\n*:\n*<\/span>\n<span>(.*)<\/span>");
