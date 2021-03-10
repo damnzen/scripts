@@ -1,3 +1,8 @@
+/*
+function jsonUrl(url) {
+	return 'https://script.google.com/macros/s/AKfycbxRjzQftnEWO7fwETplJpsJMC79UTlXCQGSYjmdac3vHGJYFida/exec?url=' + encodeURIComponent(url);
+}
+*/
 function getProductCode(title){
 	var m = title.match(/(?=.*[0-9])[\-A-Z0-9]{6,}/g);
 	if (m){
@@ -22,6 +27,18 @@ function cleanUrl(url){
 
 function Kakaku(apiKey) {
   this.apiKey = apiKey;
+}
+
+Kakaku.prototype.autocomp = function (query){
+  var url = 'https://kakaku.com/apiSuggest/ApiSuggest.aspx?kw=k' + encodeURIComponent(query);
+  var result = http().get(url);
+  var json = JSON.parse(result.body);  
+  var items = json["suggestion"];
+  var result = items.map(item => ({
+    "title" : item.orgName,
+    "desc" : item.categoryName
+  }));
+  return result
 }
 
 Kakaku.prototype.search = function (query) {
@@ -62,7 +79,7 @@ Kakaku.prototype.extra = function (id) {
   json["productCode"] = getProductCode(json.product.productName);
   //if (json.salesDate) json["salesDate"] = Date.parse(json.salesDate.replace(/[年月日]/g, "/"));
   if (json.salesDate){
-    json["salesDate"] = new Date(json.salesDate.replace(/[年月日]/g, "/"));
+    json["salesDate"] = new Date((json.salesDate.replace(/[年月日]/g, "/") + "01").substr(0,10));
     json["salesDateUTC"] = json["salesDate"].getTime();
   }
   //Logger.log(json["salesDate"])
@@ -142,3 +159,4 @@ Kakaku.prototype.shopsWeb = function (productID) {
   }
   return shops
 }
+
