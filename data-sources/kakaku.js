@@ -38,6 +38,7 @@ Kakaku.prototype.search = function (query) {
                 item['image'] = item.imgUrls.catlog;
                 //item["kakakuUrl"] = "https://kakaku.com/item/" + item["productID"] + "/"
                 item['desc'] = [item.maker, item.categoryName, item.comment].join(' ');
+                if(/容量：([^\s]+)\s/.test(item.comment)) item.amount = RegExp.$1;
   });
 return items;
 }
@@ -60,7 +61,11 @@ Kakaku.prototype.extra = function (id) {
   json["kakakuUrl"] = json.shareMessages.url;
   json["productCode"] = getProductCode(json.product.productName);
   //if (json.salesDate) json["salesDate"] = Date.parse(json.salesDate.replace(/[年月日]/g, "/"));
-  if (json.salesDate) json["salesDate"] = new Date(json.salesDate.replace(/[年月日]/g, "/"));
+  if (json.salesDate){
+    json["salesDate"] = new Date(json.salesDate.replace(/[年月日]/g, "/"));
+    json["salesDateUTC"] = json["salesDate"].getTime();
+  }
+  //Logger.log(json["salesDate"])
   return json
 }
 
@@ -73,6 +78,44 @@ Kakaku.prototype.shops = function (id, order, area) {
   var shops = JSON.parse(result.body);
   return shops;
 }
+/*
+Kakaku.prototype.search = function (query) {
+  var url = 'http://api.kakaku.com/WebAPI/ItemSearch/Ver1.0/ItemSearch.aspx?ApiKey=' + this.apiKey + '&Keyword=' + encodeURIComponent(query) + '&CategoryGroup=ALL&HitNum=20';
+  var result = http().get(jsonUrl(url));
+  var json = JSON.parse(result.body);
+  //log(result.body);
+  //log(json.query.results.ProductInfo);
+  var results = json["ProductInfo"];
+  var items;
+  if (!results){
+    items = [];
+  }else if (results.NumOfResult == 1){
+    items = [results.Item];
+  }else{
+    items = results.Item;
+  }
+  items.forEach(item => {
+    //log(item);
+    item['title'] = item.ProductName;
+    item['desc'] = [
+      item.MakerName,
+      item.CategoryName
+    ].join(' ');
+    
+    item['thumb'] = item.ImageUrl;
+    item['image'] = item.ImageUrl.replace("/m/", "/fullscale/");
+    //item['id'] = item.ProductID;
+    item['id'] = item;
+  });
+  return items;
+}
+
+Kakaku.prototype.extra = function (item) {
+  item["shops"] = Kakaku.prototype.getShops(item.ProductID);
+  item["id"] = null;
+  return item
+}
+*/
 
 Kakaku.prototype.shopsWeb = function (productID) {
   var result = http().get('http://kakaku.com/item/' + productID + '/');
