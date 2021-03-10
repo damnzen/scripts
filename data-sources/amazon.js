@@ -11,7 +11,7 @@ function cleanTitle(title){
 
 
 function getAmount(title){
-	var m = name.match(/\d+(ml|mL|ML|g)/g);
+	var m = title.match(/\d+(ml|mL|ML|g)/g);
 	if (m){
 	 return m[m.length-1]
 	}else{
@@ -25,14 +25,32 @@ function imageFromThumb(thumb){
 
 function getSpec(body, name){
   var maker
-  var re2 = new RegExp(name + '\n<\/th>\n+<td class="a-size-base">\n(.*)\n<\/td>')
-  var re1 = new RegExp(name + "\n:\n<\/span>\n<span>(.*)<\/span>")
-  if(re1.test(body)){
-    maker = RegExp.$1;
-  }else if(re2.test(body)){
-    maker = RegExp.$1;
+
+  var re0 = /<table id="productDetails.*?<\/table>/gs;
+  var tables = body.match(re0);
+  //console.log(tables);
+  if(tables){
+    var table = tables.join("/n");
+    //var table = RegExp.lastMatch;
+    //console.log(table);
+    var re = new RegExp(name + '\n<\/th>\n+<td .*?>\n(.*)\n<\/td>')
+    if(re.test(table)){
+      maker = RegExp.$1;
+    }else{
+      maker = "";
+    }
+  }else if((/<div id="detailBullets_feature_div">(.*)<\/div>/s).test(body)){
+    
+    var table = RegExp.$1;
+    var re = new RegExp(name + "\n*:\n*<\/span>\n<span>(.*)<\/span>");
+    if(re.test(table)){
+      maker = RegExp.$1;
+     }else{
+      maker = "";
+    }
+
   }else{
-    maker = ""
+    maker = "";
   }
   return maker
 }
@@ -115,7 +133,10 @@ Amazon.prototype.extra = function(asin, getfull){
   }
   o.maker = getSpec(res.body, "メーカー");
   var d = getSpec(res.body, "Amazon.co.jp での取り扱い開始日");
-  if(d) o.salesDate = new Date(d);
+  if(d){
+    o.salesDate = new Date(d);
+    o.salesDateUTC = o.salesDate.getTime();
+  }
   o.productCode = getSpec(res.body, "型番");
 //  if(/メーカー\n:\n<\/span>\n<span>(.*)<\/span>/.test(res.body)){
 //    o.maker = RegExp.$1;
@@ -123,11 +144,13 @@ Amazon.prototype.extra = function(asin, getfull){
   if(/<span id="priceblock_ourprice".*>￥(.*)<\/span>/.test(res.body)){
     o.price = parseInt(RegExp.$1.replace(",", ""));
   }
+  
   if(getfull){
     o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
     o.amazonUrl = "https://www.amazon.co.jp/o/ASIN/" + asin + "/";
     if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
       o.title = cleanTitle(RegExp.$1);
+      o.amount = getAmount(o.title);
     }
   }
   
