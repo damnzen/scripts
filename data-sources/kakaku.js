@@ -30,13 +30,14 @@ function Kakaku(apiKey) {
 }
 
 Kakaku.prototype.autocomp = function (query){
-  var url = 'https://kakaku.com/apiSuggest/ApiSuggest.aspx?kw=k' + encodeURIComponent(query);
+  var url = 'https://kakaku.com/apiSuggest/ApiSuggest.aspx?kw=' + encodeURIComponent(query);
   var result = http().get(url);
   var json = JSON.parse(result.body);  
   var items = json["suggestion"];
+  if (!items) return []
   var result = items.map(item => ({
     "title" : item.orgName,
-    "desc" : item.categoryName
+    "desc" : item.categoryName ? item.categoryName : ""
   }));
   return result
 }
@@ -159,4 +160,3 @@ Kakaku.prototype.shopsWeb = function (productID) {
   }
   return shops
 }
-
