@@ -82,7 +82,7 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 	var v = res.body.split('<div data-asin');
 	v.shift();
 	v.pop();
-	var regexp = /<img src="(.*)"[\s\S]*?alt="(.*)"/;
+	var regexp = /<img class="s-image" src="(.*?)"[\s\S]*?alt="(.*?)"/;
 	var resultArray = [];
 	var o;
 	v.forEach(div=>{
