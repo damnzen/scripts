@@ -160,3 +160,4 @@ Kakaku.prototype.shopsWeb = function (productID) {
   }
   return shops
 }
+
