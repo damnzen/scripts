@@ -35,7 +35,7 @@ function getSpec(body, name){
     //console.log(table);
     var re = new RegExp(name + '\n<\/th>\n+<td .*?>\n(.*)\n<\/td>')
     if(re.test(table)){
-      maker = RegExp.$1;
+      maker = RegExp.$1.replace("&lrm;", "");
     }else{
       maker = "";
     }
@@ -44,7 +44,7 @@ function getSpec(body, name){
     var table = RegExp.$1;
     var re = new RegExp(name + "\n*:\n*<\/span>\n<span>(.*)<\/span>");
     if(re.test(table)){
-      maker = RegExp.$1;
+      maker = RegExp.$1.replace("&lrm;", "");
      }else{
       maker = "";
     }
@@ -79,10 +79,11 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 //req.headers({"User-Agent": "Opera/9.80 (Android; Opera Mini/8.0.1807/36.1609; U; en) Presto/2.12.423 Version/12.16"});
 	//req.headers({"User-Agent": ("D501i DoCoMo/1.0/D5" + new Date().getSeconds()).toString()});
 	var res = req.get(url);
+  Logger.log(res.body)
 	var v = res.body.split('<div data-asin');
 	v.shift();
 	v.pop();
-	var regexp = /<img class="s-image" src="(.*?)"[\s\S]*?alt="(.*?)"/;
+	var regexp = /<img src="(.*)"[\s\S]*?alt="(.*)"/;
 	var resultArray = [];
 	var o;
 	v.forEach(div=>{
