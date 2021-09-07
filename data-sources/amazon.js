@@ -19,6 +19,8 @@ function getAmount(title){
 	}
 }
 
+//function getProductCode
+
 function imageFromThumb(thumb){
 	return thumb.replace(/_AC.*_\./,"")
 }
@@ -129,9 +131,12 @@ Amazon.prototype.extra = function(asin, getfull){
   var res = req.get(url);
   
   var o = {};
-  if(/<div id="featurebullets_feature_div"[\s\S]*<!--  Loading EDP related metadata -->/.test(res.body)){
+  if(/<div id="productOverview_feature_div"[\s\S]*<\/table>/.test(res.body)){
     //Logger.log(RegExp.lastMatch);
-    o.comment = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "");
+    o.comment = RegExp.lastMatch.replace(/\n+/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "");
+  }else if(/<div id="featurebullets_feature_div"[\s\S]*<!--  Loading EDP related metadata -->/.test(res.body)){
+    //Logger.log(RegExp.lastMatch);
+    o.comment = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "");
   }
   o.maker = getSpec(res.body, "メーカー");
   var d = getSpec(res.body, "Amazon.co.jp での取り扱い開始日");
