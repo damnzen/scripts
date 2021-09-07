@@ -11,7 +11,7 @@ function cleanTitle(title){
 
 
 function getAmount(title){
-	var m = title.match(/\d+(ml|mL|ML|g)/g);
+	var m = title.match(/\d+(本|袋|ml|mL|ML|g)/g);
 	if (m){
 	 return m[m.length-1]
 	}else{
