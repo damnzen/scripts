@@ -133,9 +133,9 @@ Amazon.prototype.extra = function(asin, getfull){
   var res = req.get(url);
   
   var o = {};
-  if(/<h1 id="title"[\s\S]*?<\/h1>/.test(res.body)){
-    o.title = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n/g, "")
-  }
+//  if(/<h1 id="title"[\s\S]*?<\/h1>/.test(res.body)){
+//    o.title = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n/g, "")
+//  }
   if(/<div id="productOverview_feature_div"[\s\S]*?<\/table>/.test(res.body)){
     //Logger.log(RegExp.lastMatch);
     o.comment = RegExp.lastMatch.replace(/\n+/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "");
@@ -150,7 +150,6 @@ Amazon.prototype.extra = function(asin, getfull){
     o.salesDateUTC = o.salesDate.getTime();
   }
   o.productCode = getSpec(res.body, "型番");
-  if (o.productCode == "") o.productCode = getProductCode(o.title)
 //  if(/メーカー\n:\n<\/span>\n<span>(.*)<\/span>/.test(res.body)){
 //    o.maker = RegExp.$1;
 //  }
@@ -164,6 +163,7 @@ Amazon.prototype.extra = function(asin, getfull){
     if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
       o.title = cleanTitle(RegExp.$1);
       o.amount = getAmount(o.title);
+      if (o.productCode == "") o.productCode = getProductCode(o.title)
     }
   }
   
