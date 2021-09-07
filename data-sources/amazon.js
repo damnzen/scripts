@@ -45,7 +45,7 @@ function getSpec(body, name){
     }
   }else if((/<div id="detailBullets_feature_div">([\s\S]*)<\/div>/).test(body)){
     
-    var table = RegExp.$1;
+    var table = RegExp.$1.replace(/&(rl|lr)m;/g, "");
     var re = new RegExp(name + "\n*:\n*<\/span>\n<span>(.*)<\/span>");
     if(re.test(table)){
       maker = RegExp.$1.replace("&lrm;", "");
@@ -157,7 +157,7 @@ Amazon.prototype.extra = function(asin, getfull){
     o.price = parseInt(RegExp.$1.replace(",", ""));
   }
   
-  if(getfull){
+  //if(getfull){
     o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
     o.amazonUrl = "https://www.amazon.co.jp/o/ASIN/" + asin + "/";
     if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
@@ -165,7 +165,7 @@ Amazon.prototype.extra = function(asin, getfull){
       o.amount = getAmount(o.title);
       if (o.productCode == "") o.productCode = getProductCode(o.title)
     }
-  }
+  //}
   
   return o;
 }
