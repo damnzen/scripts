@@ -137,8 +137,8 @@ Amazon.prototype.extra = function(asin, getfull){
 //    o.title = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n/g, "")
 //  }
   if(/<div id="productOverview_feature_div"[\s\S]*?<\/table>/.test(res.body)){
-    //Logger.log(RegExp.lastMatch);
-    o.comment = RegExp.lastMatch.replace(/\n+/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "");
+    //log(RegExp.lastMatch);
+    o.comment = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "");
   }else if(/<div id="featurebullets_feature_div"[\s\S]*<!--  Loading EDP related metadata -->/.test(res.body)){
     //Logger.log(RegExp.lastMatch);
     o.comment = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "");
@@ -158,7 +158,7 @@ Amazon.prototype.extra = function(asin, getfull){
   }
   
   //if(getfull){
-    o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
+    //o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
     o.amazonUrl = "https://www.amazon.co.jp/o/ASIN/" + asin + "/";
     if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
       o.title = cleanTitle(RegExp.$1);
