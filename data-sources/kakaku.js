@@ -61,8 +61,9 @@ Kakaku.prototype.search = function (query) {
 return items;
 }
 
-Kakaku.prototype.extra = function (id) {
-  var url = 'https://app.kakaku.com/itemview/v1/' + id + '/';
+// ?priceorder=1&carriagearea=29
+Kakaku.prototype.extra = function (id, priceorder, carriagearea) {
+  var url = 'https://app.kakaku.com/itemview/v1/' + id + `/?priceorder=${priceorder}&carriagearea=${carriagearea}`;
   var result = http().get(url);
   var json = JSON.parse(result.body);
 
@@ -162,47 +163,3 @@ Kakaku.prototype.shopsWeb = function (productID) {
   return shops
 }
 
-
-//---------------------
-function test6(){
-  var url = "https://kakaku.com/pt/ard.asp?url=https%3a%2f%2fwww.amazon.co.jp%2fdp%2fB08L48V1WN%3ftag%3dkakaku-subtag-22%26ascsubtag%3dkakaku-pc-pcother-22_B08L48V1WN_K0001296639_732%26me%3dAN1VRQENFRJN5%26linkCode%3dogi%26th%3d1%26psc%3d1";
-  Logger.log(cleanAmazonUrl(url));
-}
-
-function test5(){
-  var kkk = new Kakaku();
-  var r = kkk.autocomp("kc-h");
-  Logger.log(r);
-}
-
-function test4(){
-  var kkk = new Kakaku();
-  var r = kkk.shopsWeb("K0001296639");
-  Logger.log(r);
-}
-
-
-function test3(){
-  var kkk = new Kakaku("b0572c65d75b8edf330bf88354b8d761");
-  var r = kkk.extra("K0001296639");
-  //var r = kkk.shops("K0001248222");
-  //var r = kkk.extra("K0000958768");
-  Logger.log(r);
-
-}
-
-function test2(){
-  var kkk = new Kakaku("b0572c65d75b8edf330bf88354b8d761");
-  //var r = kkk.extra("K0001278149");
-  var r = kkk.extra("J0000033233");
-  //var r = kkk.extra("K0000958768");
-  Logger.log(r);
-
-}
-
-function test1(){
-  var a = 1;
-  var kkk = new Kakaku("b0572c65d75b8edf330bf88354b8d761");
-  var r = kkk.search("ニベアサン");
-  Logger.log(r);
-}
