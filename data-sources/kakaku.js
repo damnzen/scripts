@@ -104,7 +104,8 @@ Kakaku.prototype.shops = function (id, order, area) {
 
 // ?priceorder=1&carriagearea=29
 Kakaku.prototype.shopsWeb = function (productID, priceorder, carriagearea) {
-  var url = 'http://kakaku.com/item/' + productID + `/?priceorder=${priceorder}&carriagearea=${carriagearea}`;
+  var url = 'http://kakaku.com/item/' + productID + '/?priceorder=' + priceorder + '&carriagearea=' + carriagearea;
+  //var url = 'http://kakaku.com/item/' + productID + `/?priceorder=${priceorder}&carriagearea=${carriagearea}`;
   var result = http().get(url);
   //var body = ECL.charset.convert(result.body, "Unicode", "SJIS");
   var body = result.body;
@@ -181,3 +182,4 @@ Kakaku.prototype.extra = function (item) {
   return item
 }
 */
+
