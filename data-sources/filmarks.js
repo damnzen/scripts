@@ -23,20 +23,14 @@ Filmarks.prototype.autocompleteForUrl= function(query){
   return rs2
 }
 
-Filmarks.prototype.autocompleteForId= function(query){
-  var rs = this.autocomplete(query);
-  var rs2 = rs.map(r => ({
-         title : "movies/" + r["id"],
-         thumb : r["imagePath"],
-         desc : r["title"],
-                   id : r["id"],
-                   }));
-  return rs2
-}
-
 Filmarks.prototype.lookup = function(id, limit){
+  id = id + "";
   limit = limit || 5;
-  var url = "https://api.filmarks.com/v2/movies/" + id + "?contents=all&limit=" + limit;
+  if(id.indexOf("/")>0){
+    var url = "https://api.filmarks.com/v2/" + id + "?contents=all&limit=" + limit;
+  }else{
+    var url = "https://api.filmarks.com/v2/movies/" + id + "?contents=all&limit=" + limit;
+  }
   var req = http();
   var res = req.get(url);
   var r = JSON.parse(res.body);
@@ -44,15 +38,35 @@ Filmarks.prototype.lookup = function(id, limit){
   //flatten(r, "movie");
   Object.assign(r, r["movie"]);
   r["filmarksurl"] = "https://filmarks.com/movies/" + id;
-  r["copyright"] = r["copyright"] || "";
-  var director = r["credits"].find(e => e.roleName == "監督");
-  if (director) r["director"] = director.people[0].name;
-  
-  var actors = r["credits"].find(e => e.roleName == "キャスト");
-  if (actors) r["actors"] = actors.people.map(e => e.name);
-  if (r["originalImagePath"]) r["image"] = r["originalImagePath"].replace("/store/", "/store/fit/1000/1000/");
-  r["vodServices"].forEach(e =>{
-                           if (e.serviceTypes.indexOf("svod")>=0) r[e["name"]] = e["link"];
-});
+  if(r["credits"].length){
+    //r["director"] = r["credits"].find(e => e.roleName == "監督").people[0].name;
+    r["director"] = r["credits"].find(e => e.roleName == "監督").people.map(e => e.name);
+    var actors = r["credits"].find(e => e.roleName == "キャスト");
+    if(actors) r["actors"] = actors.people.map(e => e.name);
+  }
+//  r["vodServices"].forEach(e =>{
+//                           if (e.serviceTypes.includes("svod")) r[e["name"]] = e["link"];
+//});
+  var services =  r["vodServices"].filter(e => e.serviceTypes.includes("svod"));
+  services.forEach(e =>{r[e["name"]] = e["link"];});
+  r["services"] = services.map(e => e.name == "Amazon Prime Video" ? "Prime Video" : e.name).join(",");
+
 return r
 }
+
+/*
+function flatten(o, key){
+    var sub = o[key];
+    if(typeof sub == "undefined") return;
+    Object.keys(sub).forEach(function(subkey){
+        if(Array.isArray(sub[subkey])){
+            o[subkey] = sub[subkey].join(',');
+        }else if(typeof sub[subkey] == "object"){
+            o[subkey] = flatten(sub, subkey);
+        }else{
+            o[subkey] = sub[subkey]
+        }
+
+    });
+}
+*/
