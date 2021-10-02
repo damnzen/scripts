@@ -59,7 +59,8 @@ Filmarks.prototype.lookup = function(id, limit){
 //  r["vodServices"].forEach(e =>{
 //                           if (e.serviceTypes.includes("svod")) r[e["name"]] = e["link"];
 //});
-  var services =  r["vodServices"].filter(e => e.serviceTypes.includes("svod"));
+  //var services =  r["vodServices"].filter(e => e.serviceTypes.includes("svod"));
+  var services =  r["vodServices"].filter(e => e.serviceTypes.indexOf("svod") >= 0);
   services.forEach(e =>{r[e["name"]] = e["link"];});
   r["services"] = services.map(e => e.name == "Amazon Prime Video" ? "Prime Video" : e.name);
 
