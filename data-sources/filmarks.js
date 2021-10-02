@@ -61,7 +61,7 @@ Filmarks.prototype.lookup = function(id, limit){
 //});
   var services =  r["vodServices"].filter(e => e.serviceTypes.includes("svod"));
   services.forEach(e =>{r[e["name"]] = e["link"];});
-  r["services"] = services.map(e => e.name == "Amazon Prime Video" ? "Prime Video" : e.name).join(",");
+  r["services"] = services.map(e => e.name == "Amazon Prime Video" ? "Prime Video" : e.name);
 
 return r
 }
