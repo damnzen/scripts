@@ -51,7 +51,8 @@ Filmarks.prototype.lookup = function(id, limit){
   r["filmarksurl"] = "https://filmarks.com/movies/" + id;
   if(r["credits"].length){
     //r["director"] = r["credits"].find(e => e.roleName == "監督").people[0].name;
-    r["director"] = r["credits"].find(e => e.roleName == "監督").people.map(e => e.name);
+    var director = r["credits"].find(e => e.roleName == "監督");
+    if(director) r["director"] = director.people.map(e => e.name);
     var actors = r["credits"].find(e => e.roleName == "キャスト");
     if(actors) r["actors"] = actors.people.map(e => e.name);
   }
