@@ -2,6 +2,17 @@ function Filmarks(){
   
 }
 
+Filmarks.prototype.autocompleteForId= function(query){
+  var rs = this.autocomplete(query);
+  var rs2 = rs.map(r => ({
+         title : "movies/" + r["id"],
+         thumb : r["imagePath"],
+         desc : r["title"],
+                   id : r["id"],
+                   }));
+  return rs2
+}
+
 Filmarks.prototype.autocomplete = function(query){
   var url = "https://api.filmarks.com/v2/movies?autocomplete=1&limit=24&q=" + encodeURIComponent(query);
   var req = http();
