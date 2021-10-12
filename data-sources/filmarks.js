@@ -2,24 +2,46 @@ function Filmarks(){
   
 }
 
-Filmarks.prototype.autocompleteForId= function(query){
-  var rs = this.autocomplete(query);
-  var rs2 = rs.map(r => ({
+Filmarks.prototype.autocompleteForId= function(query, limit){
+  limit = limit || 10;
+  var rs = this.autocompleteMovie(query, limit);
+  var rs2 = this.autocompleteTv(query, limit);
+  
+  var result = rs.map(r => ({
          title : "movies/" + r["id"],
          thumb : r["imagePath"],
          desc : r["title"],
-                   id : r["id"],
-                   }));
-  return rs2
+                   id : "movies/" + r["id"],
+                   })).concat(rs2.map(r => ({
+         title : "dramas/" + r["seriesId"] + "/" + r["id"],
+         thumb : r["imagePath"],
+         desc : r["title"],
+                   id : "drama/seasons/" + r["id"],
+                   })));
+  return result
 }
 
-Filmarks.prototype.autocomplete = function(query){
-  var url = "https://api.filmarks.com/v2/movies?autocomplete=1&limit=24&q=" + encodeURIComponent(query);
+Filmarks.prototype.autocomplete = function(query, limit){
+  return this.autocompleteMovie(query, limit);
+}
+
+Filmarks.prototype.autocompleteMovie = function(query, limit){
+  var url = "https://api.filmarks.com/v2/movies?autocomplete=1&limit=" + limit + "&q=" + encodeURIComponent(query);
   var req = http();
   var res = req.get(url);
   var json = JSON.parse(res.body);
   
   var rs = json["movies"];
+  return rs;
+}
+
+Filmarks.prototype.autocompleteTv = function(query, limit){
+  var url = "https://api.dramarks.com/api/v2/drama/seasons?autocomplete=1&limit=" + limit + "&q=" + encodeURIComponent(query);
+  var req = http();
+  var res = req.get(url);
+  var json = JSON.parse(res.body);
+  
+  var rs = json["seasons"];
   return rs;
 }
 
@@ -37,18 +59,20 @@ Filmarks.prototype.autocompleteForUrl= function(query){
 Filmarks.prototype.lookup = function(id, limit){
   id = id + "";
   limit = limit || 5;
-  if(id.indexOf("/")>0){
-    var url = "https://api.filmarks.com/v2/" + id + "?contents=all&limit=" + limit;
-  }else{
-    var url = "https://api.filmarks.com/v2/movies/" + id + "?contents=all&limit=" + limit;
-  }
+  var url = "https://api.filmarks.com/v2/" + id + "?contents=all&limit=" + limit;
+  
   var req = http();
   var res = req.get(url);
   var r = JSON.parse(res.body);
 
-  //flatten(r, "movie");
-  Object.assign(r, r["movie"]);
-  r["filmarksurl"] = "https://filmarks.com/movies/" + id;
+  if(id.indexOf("drama")==0){
+    Object.assign(r, r["season"]);
+    r["filmarksurl"] = "https://filmarks.com/dramas/"+ r["seriesId"] + "/" + r["id"];
+  }else{
+    Object.assign(r, r["movie"]);
+    r["filmarksurl"] = "https://filmarks.com/movies/" + r["id"]; 
+  }
+  
   if(r["credits"].length){
     //r["director"] = r["credits"].find(e => e.roleName == "監督").people[0].name;
     var director = r["credits"].find(e => e.roleName == "監督");
@@ -56,30 +80,14 @@ Filmarks.prototype.lookup = function(id, limit){
     var actors = r["credits"].find(e => e.roleName == "キャスト");
     if(actors) r["actors"] = actors.people.map(e => e.name);
   }
-//  r["vodServices"].forEach(e =>{
-//                           if (e.serviceTypes.includes("svod")) r[e["name"]] = e["link"];
-//});
-  //var services =  r["vodServices"].filter(e => e.serviceTypes.includes("svod"));
+  r["copyright"] = r["copyright"] || "";
+    
   var services =  r["vodServices"].filter(e => e.serviceTypes.indexOf("svod") >= 0);
+  //各vodサービスごとのURLを取得する。
   services.forEach(e =>{r[e["name"]] = e["link"];});
+  if("Amazon Prime Video" in r) r["Amazon Prime Video"] = r["Amazon Prime Video"].replace("?tag=vod_contentsdetail-22","");
+  //利用できるvodのリスト
   r["services"] = services.map(e => e.name == "Amazon Prime Video" ? "Prime Video" : e.name);
-
+  
 return r
 }
-
-/*
-function flatten(o, key){
-    var sub = o[key];
-    if(typeof sub == "undefined") return;
-    Object.keys(sub).forEach(function(subkey){
-        if(Array.isArray(sub[subkey])){
-            o[subkey] = sub[subkey].join(',');
-        }else if(typeof sub[subkey] == "object"){
-            o[subkey] = flatten(sub, subkey);
-        }else{
-            o[subkey] = sub[subkey]
-        }
-
-    });
-}
-*/
