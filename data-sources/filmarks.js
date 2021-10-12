@@ -13,7 +13,8 @@ Filmarks.prototype.autocompleteForId= function(query, limit){
          desc : r["title"],
                    id : "movies/" + r["id"],
                    })).concat(rs2.map(r => ({
-         title : "dramas/" + r["seriesId"] + "/" + r["id"],
+         title : "drama/seasons/" + r["id"],
+         //title : "dramas/" + r["seriesId"] + "/" + r["id"],
          thumb : r["imagePath"],
          desc : r["title"],
                    id : "drama/seasons/" + r["id"],
