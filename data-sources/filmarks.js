@@ -7,7 +7,7 @@ Filmarks.prototype.autocompleteForId= function(query, limit){
   var title = query[0]=="/" ? query.substring(3) : query;
   var rs1 = [], rs2 = [];
   if(query.slice(0,3) == "/m:" || query[0] != "/"){
-    rs1 = this.autocompleteMovie(query, limit);
+    rs1 = this.autocompleteMovie(title, limit);
     rs1 = rs1.map(r => ({
           title : "movies/" + r["id"],
           thumb : r["imagePath"],
@@ -16,7 +16,7 @@ Filmarks.prototype.autocompleteForId= function(query, limit){
                     }));
   }
   if(query.slice(0,3) == "/t:" || query[0] != "/"){
-    rs2 = this.autocompleteTv(query, limit);
+    rs2 = this.autocompleteTv(title, limit);
     rs2 = rs2.map(r => ({
           title : "drama/seasons/" + r["id"],
           //title : "dramas/" + r["seriesId"] + "/" + r["id"],
@@ -102,4 +102,3 @@ Filmarks.prototype.lookup = function(id, limit){
   
 return r
 }
-
