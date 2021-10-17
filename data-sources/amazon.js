@@ -59,7 +59,7 @@ function getSpec(body, name){
   return maker
 }
 
-export default function Amazon () {
+function Amazon () {
 }
 
 Amazon.prototype.autocomp = function(query) {
