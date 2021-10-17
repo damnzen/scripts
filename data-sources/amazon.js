@@ -59,7 +59,7 @@ function getSpec(body, name){
   return maker
 }
 
-function Amazon () {
+export default function Amazon () {
 }
 
 Amazon.prototype.autocomp = function(query) {
@@ -136,7 +136,7 @@ Amazon.prototype.extra = function(asin, getfull){
 //  if(/<h1 id="title"[\s\S]*?<\/h1>/.test(res.body)){
 //    o.title = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n/g, "")
 //  }
-  if(/<div id="productOverview_feature_div"[\s\S]*?<\/table>/.test(res.body)){
+  if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--  Loading EDP related metadata -->)/.test(res.body)){
     //log(RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, ""));
     o.comment = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "");
   }else if(/<div id="featurebullets_feature_div"[\s\S]*<!--  Loading EDP related metadata -->/.test(res.body)){
