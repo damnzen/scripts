@@ -8,24 +8,19 @@ Filmarks.prototype.autocompleteForId= function(query, limit){
   var rs1 = [], rs2 = [];
   if(query.slice(0,3) == "/m:" || query[0] != "/"){
     rs1 = this.autocompleteMovie(title, limit);
-    rs1 = rs1.map(r => ({
-          title : "movies/" + r["id"],
-          thumb : r["imagePath"],
-          desc : r["title"],
-                    id : "movies/" + r["id"],
-                    }));
   }
   if(query.slice(0,3) == "/t:" || query[0] != "/"){
     rs2 = this.autocompleteTv(title, limit);
-    rs2 = rs2.map(r => ({
-          title : "drama/seasons/" + r["id"],
+  }
+  var result = rs1.concat(rs2);
+  result = result.map(r => ({
+          title : r["compositeId"],
           //title : "dramas/" + r["seriesId"] + "/" + r["id"],
           thumb : r["imagePath"],
           desc : r["title"],
-                    id : "drama/seasons/" + r["id"],
+                    id : r["compositeId"],
                     }));
-  }
-  var result = rs1.concat(rs2);
+
   return result
 }
 
@@ -42,6 +37,7 @@ Filmarks.prototype.autocompleteMovie = function(query, limit){
   var json = JSON.parse(res.body);
   
   var rs = json["movies"];
+  rs.some(r => {r.compositeId = "movies/" + r.id});
   return rs;
 }
 
@@ -53,6 +49,7 @@ Filmarks.prototype.autocompleteTv = function(query, limit){
   var json = JSON.parse(res.body);
   
   var rs = json["seasons"];
+  rs.some(r => {r.compositeId = "drama/seasons" + r.id});
   return rs;
 }
 
@@ -67,9 +64,19 @@ Filmarks.prototype.autocompleteForUrl= function(query){
   return rs2
 }
 
-Filmarks.prototype.lookup = function(id, limit){
-  id = id + "";
+Filmarks.prototype.lookup = function(id, limit, type){
+  //id = id + "";
   limit = limit || 5;
+  switch (type){
+    case "movie":
+      id = "movies/" + id;
+      break;
+    case "tv":
+      id = "drama/seasons/" + id;
+      break;
+    default :
+      id = "" + id;
+  }
   var url = "https://api.filmarks.com/v2/" + id + "?contents=all&limit=" + limit;
   
   var req = http();
@@ -79,9 +86,11 @@ Filmarks.prototype.lookup = function(id, limit){
   if(id.indexOf("drama")==0){
     Object.assign(r, r["season"]);
     r["filmarksurl"] = "https://filmarks.com/dramas/"+ r["seriesId"] + "/" + r["id"];
+    r["compositeId"] = "drama/seasons/" + r["id"];
   }else{
     Object.assign(r, r["movie"]);
     r["filmarksurl"] = "https://filmarks.com/movies/" + r["id"]; 
+    r["compositeId"] = "movies/" + r["id"];
   }
   
   if(r["credits"].length){
@@ -101,4 +110,18 @@ Filmarks.prototype.lookup = function(id, limit){
   r["services"] = services.map(e => e.name == "Amazon Prime Video" ? "Prime Video" : e.name);
   
 return r
+}
+
+
+function test21(){
+ var fmarks = new Filmarks(); 
+  var r = fmarks.lookup("movies/56646",1);
+  Logger.log(r["Amazon Prime Video"]);
+}
+
+function test22(){
+ var fmks = new Filmarks(); 
+  var r = fmks.autocompleteForId("/m:トリック",10);
+  //var r = fmks.autocomplete("3月のライオン 前編")
+  Logger.log(r);
 }
