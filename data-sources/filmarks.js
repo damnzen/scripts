@@ -49,7 +49,7 @@ Filmarks.prototype.autocompleteTv = function(query, limit){
   var json = JSON.parse(res.body);
   
   var rs = json["seasons"];
-  rs.some(r => {r.compositeId = "drama/seasons" + r.id});
+  rs.some(r => {r.compositeId = "drama/seasons/" + r.id});
   return rs;
 }
 
@@ -110,18 +110,4 @@ Filmarks.prototype.lookup = function(id, limit, type){
   r["services"] = services.map(e => e.name == "Amazon Prime Video" ? "Prime Video" : e.name);
   
 return r
-}
-
-
-function test21(){
- var fmarks = new Filmarks(); 
-  var r = fmarks.lookup("movies/56646",1);
-  Logger.log(r["Amazon Prime Video"]);
-}
-
-function test22(){
- var fmks = new Filmarks(); 
-  var r = fmks.autocompleteForId("/m:トリック",10);
-  //var r = fmks.autocomplete("3月のライオン 前編")
-  Logger.log(r);
 }
