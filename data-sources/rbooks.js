@@ -1,3 +1,9 @@
+function formatDate(d){
+	d = d.replace(/[年月]/g,"-").replace("日","");
+	d = d + "-01-01".slice(d.length-10)
+	return Date.parse(d)
+}
+
 function Rbooks(apikey){
 	this.apikey = apikey;
 }
