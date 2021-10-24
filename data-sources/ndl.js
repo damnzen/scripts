@@ -14,7 +14,7 @@ NDL.prototype.lookup = function(isbn){
   var namespaceDcndl = XmlService.getNamespace("dcndl", "http://ndl.go.jp/dcndl/terms/");
   var namespacexsi = XmlService.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
   
-  var result = items.map(item => {
+  var items = items.map(item => {
     let bookinfo = {
       title : item.getChildText("title", namespaceDc),
       pubDate : new Date(item.getChildText("pubDate")),
@@ -41,16 +41,6 @@ NDL.prototype.lookup = function(isbn){
     return bookinfo
   });
 
-  //本のタイトル、巻数、版
-  var bookTitle = items[0].getChildText("title", namespaceDc);
-  var bookVolume = items[0].getChildText("volume", namespaceDcndl);
-  var bookEdition = items[0].getChildText("edition", namespaceDcndl);
-  
-  //本の巻数や版を取得して足し合わせて、書籍管理で１セルで済むようにする。
-  
-  //{bookTitle} {bookVolume}巻 {bookEdition}
-  var bookCreator = items[0].getChildText("creator", namespaceDc);
-  
-  return result
+  return items
 
 }
