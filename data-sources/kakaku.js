@@ -1,10 +1,6 @@
-/*
-function jsonUrl(url) {
-	return 'https://script.google.com/macros/s/AKfycbxRjzQftnEWO7fwETplJpsJMC79UTlXCQGSYjmdac3vHGJYFida/exec?url=' + encodeURIComponent(url);
-}
-*/
+
 function getProductCode(title){
-	var m = title.match(/(?=.*[0-9])[\-A-Z0-9]{6,}/g);
+	var m = title.match(/(?=.*[0-9])[\-A-Z0-9\.]{6,}/g);
 	if (m){
 	 return m[m.length-1]
 	}else{
@@ -45,7 +41,7 @@ Kakaku.prototype.autocomp = function (query){
 }
 
 Kakaku.prototype.search = function (query) {
-  var url = 'https://app.kakaku.com/searchresults/v2/?=&n=20&p=1&query=' + encodeURIComponent(query) + '&searchcategorycode=&sort=clkrank_d';
+  var url = 'https://app.kakaku.com/searchresults/v2/?=&n=60&p=1&query=' + encodeURIComponent(query) + '&searchcategorycode=&sort=clkrank_d';
   var result = http().get(url);
   var json = JSON.parse(result.body);
   var items = json["products"];
@@ -116,7 +112,10 @@ Kakaku.prototype.shopsWeb = function (productID, priceorder, carriagearea) {
       if (/k3c.atrack.ping\((.*?)\);/.test(match)) {
       //Logger.log(RegExp.$1);
       //data = JSON.parse(RegExp.$1);
-      eval("var data = " + RegExp.$1);
+      var datastr = RegExp.$1;
+      datastr = datastr.replace(/:(\w+)/g, ":'$1'");
+      eval("var data = " + datastr);
+      //eval("var data = " + RegExp.$1);
       var shop = {
         "id" : data.shpkey,
         "name" : data.shpname,
@@ -143,43 +142,3 @@ Kakaku.prototype.shopsWeb = function (productID, priceorder, carriagearea) {
   }
   return shops
 }
-
-/*
-Kakaku.prototype.search = function (query) {
-  var url = 'http://api.kakaku.com/WebAPI/ItemSearch/Ver1.0/ItemSearch.aspx?ApiKey=' + this.apiKey + '&Keyword=' + encodeURIComponent(query) + '&CategoryGroup=ALL&HitNum=20';
-  var result = http().get(jsonUrl(url));
-  var json = JSON.parse(result.body);
-  //log(result.body);
-  //log(json.query.results.ProductInfo);
-  var results = json["ProductInfo"];
-  var items;
-  if (!results){
-    items = [];
-  }else if (results.NumOfResult == 1){
-    items = [results.Item];
-  }else{
-    items = results.Item;
-  }
-  items.forEach(item => {
-    //log(item);
-    item['title'] = item.ProductName;
-    item['desc'] = [
-      item.MakerName,
-      item.CategoryName
-    ].join(' ');
-    
-    item['thumb'] = item.ImageUrl;
-    item['image'] = item.ImageUrl.replace("/m/", "/fullscale/");
-    //item['id'] = item.ProductID;
-    item['id'] = item;
-  });
-  return items;
-}
-
-Kakaku.prototype.extra = function (item) {
-  item["shops"] = Kakaku.prototype.getShops(item.ProductID);
-  item["id"] = null;
-  return item
-}
-*/
-
