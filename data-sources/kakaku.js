@@ -1,4 +1,8 @@
-
+/*
+function jsonUrl(url) {
+	return 'https://script.google.com/macros/s/AKfycbxRjzQftnEWO7fwETplJpsJMC79UTlXCQGSYjmdac3vHGJYFida/exec?url=' + encodeURIComponent(url);
+}
+*/
 function getProductCode(title){
 	var m = title.match(/(?=.*[0-9])[\-A-Z0-9\.]{6,}/g);
 	if (m){
@@ -81,7 +85,7 @@ Kakaku.prototype.extra = function (id, priceorder, carriagearea) {
   //if (json.salesDate) json["salesDate"] = Date.parse(json.salesDate.replace(/[年月日]/g, "/"));
   if (json.product.salesDate){
     //json["salesDate"] = new Date((json.salesDate.replace(/[年月日]/g, "/") + "01").substr(0,10));
-    json["salesDate"] = new Date(json.salesDate.replace(/(\d+)年(\d+)月((\d+)日)?/, "$1/$2/$4").replace(/\/$/, "/1"));
+    json["salesDate"] = new Date(json.salesDate.replace(/(\d+)年(\d+)月((\d+)日)?/, "$1/$2/$4").replace(/\/[^\d]*$/, "/1"));
     json["salesDateUTC"] = json["salesDate"].getTime();
   }
   //Logger.log(json["salesDate"])
