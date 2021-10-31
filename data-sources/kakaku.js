@@ -113,7 +113,7 @@ Kakaku.prototype.shopsWeb = function (productID, priceorder, carriagearea) {
       //Logger.log(RegExp.$1);
       //data = JSON.parse(RegExp.$1);
       var datastr = RegExp.$1;
-      datastr = datastr.replace(/:(\w+)/g, ":'$1'");
+      datastr = datastr.replace(/:([A-z]\w*)/g, ":'$1'");
       eval("var data = " + datastr);
       //eval("var data = " + RegExp.$1);
       var shop = {
