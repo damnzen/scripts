@@ -152,7 +152,7 @@ Amazon.prototype.extra = function(asin, getfull){
   var req = http();
   var res = req.get(url);
   
-  if(res.status != "200" ) return {asin: asin, error : req.status, body : req.body};
+  if(res.code != "200" ) return {asin: asin, error : res.code, body : res.body};
   var o = {};
 //  if(/<h1 id="title"[\s\S]*?<\/h1>/.test(res.body)){
 //    o.title = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n/g, "")
