@@ -1,3 +1,4 @@
+
 function decNumRefToString(decNumRef) {
 	return decNumRef.replace(/&#(\d+);/ig, function(match, $1, idx, all) {
 		return String.fromCharCode($1);
@@ -11,7 +12,7 @@ function cleanTitle(title){
 
 
 function getAmount(title){
-	var m = title.match(/\d+(本|袋|ml|mL|ML|g)/g);
+	var m = title.match(/\d+(本|袋|枚|ml|mL|ML|g)/g);
 	if (m){
 	 return m[m.length-1]
 	}else{
@@ -19,6 +20,12 @@ function getAmount(title){
 	}
 }
 
+function urlToAsin(url){
+    var regex = /www\.amazon\.co.jp\/([\w-%]+\/)?(dp|gp\/product)\/(\w+\/)?(\w{10})/;
+    if (regex.test(url)){
+      return RegExp.$4;
+    }
+}
 //function productCodeFromTitle(title){
   
 //}
@@ -58,6 +65,19 @@ function getSpec(body, name){
   }
   return maker
 }
+
+function getPrice(body){
+	var re = /(.*￥3,480.*)/;
+  //Logger.log(body.slice(304000))
+  //createFile("temp.txt", body);
+	if(!re.test(body)){
+		return
+	}
+	var str = RegExp.$1;
+	
+	return parseInt(str.replace(/[￥, ]/g, ""));
+}
+
 
 function Amazon () {
 }
@@ -99,7 +119,7 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 		var m = div.match(regexp);
 		if (!m) return;
 		var title = cleanTitle(m[2]);
-		var image = imageFromThumb(m[1])
+		var image = imageFromThumb(m[1]);
 		if (title.indexOf("スポンサー")==0) return;
 		if (image.indexOf("//")==0) return;
 		//log(/<img src="(.*)"[\s\S]*?alt="(.*)"/.exec(div));
@@ -132,18 +152,20 @@ Amazon.prototype.extra = function(asin, getfull){
   var req = http();
   var res = req.get(url);
   
+  if(res.status != "200" ) return {asin: asin, error : req.status, body : req.body};
   var o = {};
 //  if(/<h1 id="title"[\s\S]*?<\/h1>/.test(res.body)){
 //    o.title = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n/g, "")
 //  }
   if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--  Loading EDP related metadata -->)/.test(res.body)){
     //log(RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, ""));
-    o.comment = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "");
+    o.comment = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").trim();
   }else if(/<div id="featurebullets_feature_div"[\s\S]*<!--  Loading EDP related metadata -->/.test(res.body)){
     //Logger.log(RegExp.lastMatch);
-    o.comment = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "");
+    o.comment = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "").trim();
   }
   //log(o.comment);
+  //o.price = getPrice(res.body);   //fetchしたhtmlには価格情報がない
   o.maker = getSpec(res.body, "メーカー");
   var d = getSpec(res.body, "Amazon.co.jp での取り扱い開始日");
   if(d){
@@ -161,6 +183,7 @@ Amazon.prototype.extra = function(asin, getfull){
   //if(getfull){
     //o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
     o.amazonUrl = "https://www.amazon.co.jp/o/ASIN/" + asin + "/";
+	o.asin = asin;
     if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
       o.title = cleanTitle(RegExp.$1);
       o.amount = getAmount(o.title);
@@ -169,6 +192,13 @@ Amazon.prototype.extra = function(asin, getfull){
   //}
   
   return o;
+}
+
+//asinから直でデータを取得する場合
+Amazon.prototype.lookup = function(asin){
+  var o = this.extra(asin, true);
+  o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ";
+    return o
 }
 
 /*
