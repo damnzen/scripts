@@ -1,7 +1,8 @@
 function formatDate(d){
-	d = d.replace(/[年月]/g,"-").replace("日","");
-	d = d + "-01-01".slice(d.length-10)
-	return Date.parse(d)
+	d = d.replace(/[年月]/g,"-").replace(/[日頃]/g,"");
+	d = (d + "-01-01").slice(0,10)
+    let out = Date.parse(d);
+  return out ? out : null
 }
 
 function Gbooks() {
@@ -26,7 +27,7 @@ Gbooks.prototype.search = function(query) {
 	var results = items.map((item,idx) =>{
 		var o = item["volumeInfo"];
 		o["id"] = idx;
-		if ("authors" in o)
+        if ("authors" in o)
 			o["author"] = o["desc"] =  o["authors"].join(", ");
 		if ("publishedDate" in o)
 			o["publishedDate"] = formatDate(o["publishedDate"]);
@@ -73,25 +74,32 @@ Rbooks.prototype.search = function(title,author){
 }
 
 Rbooks.prototype.getGenre = function(genreid){
-	genreid = genreid.split("/")[0];
-	var url = "https://app.rakuten.co.jp/services/api/BooksGenre/Search/20121128?format=json&elements=parent&formatVersion=2&booksGenreId=" + genreid + "&applicationId=" + this.apikey
-	//log(genreid);
-	var req = http();
-	var res = req.get(url);
-	var json = JSON.parse(res.body);
-	return json["parents"][0]["booksGenreName"]
+  genreid = genreid.split("/")[0];
+  var url = "https://app.rakuten.co.jp/services/api/BooksGenre/Search/20121128?format=json&elements=parent&formatVersion=2&booksGenreId=" + genreid + "&applicationId=" + this.apikey
+  //log(genreid);
+  var req = http();
+  var res = req.get(url);
+  if(res.status == "200"){
+    var json = JSON.parse(res.body);
+    return json["parents"][0]["booksGenreName"]
+  }else{
+    return null
+  }
 }
 
 Rbooks.prototype.getResults = function(json){
 	if (json["count"]){
 		var o = json["Items"][0]["Item"];
 		o["publisher"] = o["publisherName"];
+      if (o["itemCaption"])
 		o["description"] = o["itemCaption"];
 		o["image"] = o["largeImageUrl"].replace(/\?_ex=.*/,"");
 		o["publishedDate"] = formatDate(o["salesDate"]);
 		//o["publishedDate"] = new Date().getTime();
 		o["genre"] = this.getGenre(o["booksGenreId"]);
-		o["author"] = o["author"].replace("/",", ");
+		o["author"] = o["author"].replace(/\//g,", ");
+        o["authorKana"] = kanaToHira(o["authorKana"].replace(/,/g, " ").replace(/\//, ", "));
+        o["titleKana"] = kanaToHira(o["titleKana"]);
 		return o
 	}
 }
@@ -106,3 +114,5 @@ Rbooks.prototype.extra = function(g_result){
 	}
 	return Object.assign(g_result, r_result)
 }
+
+
