@@ -159,34 +159,34 @@ Amazon.prototype.extra = function(asin, getfull){
 //  }
   if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--  Loading EDP related metadata -->)/.test(res.body)){
     //log(RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, ""));
-    o.comment = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").trim();
+    o["comment"] = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").trim();
   }else if(/<div id="featurebullets_feature_div"[\s\S]*<!--  Loading EDP related metadata -->/.test(res.body)){
     //Logger.log(RegExp.lastMatch);
-    o.comment = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "").trim();
+    o["comment"] = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "").trim();
   }
   //log(o.comment);
   //o.price = getPrice(res.body);   //fetchしたhtmlには価格情報がない
-  o.maker = getSpec(res.body, "メーカー");
+  o["maker"] = getSpec(res.body, "メーカー");
   var d = getSpec(res.body, "Amazon.co.jp での取り扱い開始日");
   if(d){
-    o.salesDate = new Date(d);
-    o.salesDateUTC = o.salesDate.getTime();
+    o["salesDate"] = new Date(d);
+    o["salesDateUTC"] = o.salesDate.getTime();
   }
-  o.productCode = getSpec(res.body, "型番");
+  o["productCode"] = getSpec(res.body, "型番");
 //  if(/メーカー\n:\n<\/span>\n<span>(.*)<\/span>/.test(res.body)){
 //    o.maker = RegExp.$1;
 //  }
   if(/<span id="priceblock_ourprice".*>￥(.*)<\/span>/.test(res.body)){
-    o.price = parseInt(RegExp.$1.replace(",", ""));
+    o["price"] = parseInt(RegExp.$1.replace(",", ""));
   }
   
   //if(getfull){
     //o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
-    o.amazonUrl = "https://www.amazon.co.jp/o/ASIN/" + asin + "/";
+    o["amazonUrl"] = "https://www.amazon.co.jp/o/ASIN/" + asin + "/";
 	o.asin = asin;
     if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
-      o.title = cleanTitle(RegExp.$1);
-      o.amount = getAmount(o.title);
+      o["title"] = cleanTitle(RegExp.$1);
+      o["amount"] = getAmount(o.title);
       if (o.productCode == "") o.productCode = getProductCode(o.title)
     }
   //}
