@@ -6,12 +6,16 @@ NDL.prototype.getNdc = function(isbn){
   var r = http().get(urlString);
   if(/"dcndl:NDC9">(.*?)<\/dc:subject>/.test(r.body)){
     return RegExp.$1
+  }else if(/"dcndl:NDC8">(.*?)<\/dc:subject>/.test(r.body)){
+    return RegExp.$1
   }
 }
 
 NDL.prototype.getNdcDetail = function(ndc){
   var url = 'https://api-4pccg7v5ma-an.a.run.app/ndc9/' + ndc;
   var r = http().get(url);
+  Logger.log(ndc);
+  Logger.log(r.body);
   return JSON.parse(r.body)
 }
 
@@ -56,13 +60,14 @@ NDL.prototype.lookup = function(isbn){
 //let extent = item.getChildText("extent", namespaceDc);
 //if(extent) bookinfo.pageCount = parseInt(extent.match(/(\d+)p/)[1]);
 let pubDate = item.getChildText("pubDate");
-if (pubDate) bookinfo.pubDate = new Date(pubDate);
+if (pubDate) bookinfo.publishedDate = new Date(pubDate);
     let authorKanas = item.getChildren("creatorTranscription", namespaceDcndl);
 if(authorKanas){
   bookinfo.authorKana = kanaToHira(authorKanas.map(e => e.getText().replace(",", "")).join("/"));
   //bookinfo.authorKana = kanaToHira(authorKana.replace(",", ""));
 }
 
+  // NDLC, NDC9などを取得
     let props = item.getChildren('subject', namespaceDc);
     props.forEach(prop => {
       let name = prop.getAttribute("type",namespacexsi);
