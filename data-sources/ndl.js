@@ -14,12 +14,19 @@ NDL.prototype.getNdc = function(isbn){
 NDL.prototype.getNdcDetail = function(ndc){
   var url = 'https://api-4pccg7v5ma-an.a.run.app/ndc9/' + ndc;
   var r = http().get(url);
-  Logger.log(ndc);
-  Logger.log(r.body);
+  //Logger.log(ndc);
+  //Logger.log(r.body);
   return JSON.parse(r.body)
 }
 
 NDL.prototype.getNdcCats = function(ndc){
+  let url = "https://script.google.com/macros/s/AKfycbzz0q0mzqCJ5NIMksZAO4iftSMJftrIJ0CKMiswKxQZrzpgKRWAO48Amroup8GMpayU/exec?ndc=" + ndc;
+  let r = http().get(url);
+  return JSON.parse(r.body)
+}
+
+
+NDL.prototype.getNdcCats2 = function(ndc){
   //let parentNdc = ndc.split(".")[0];
   let smallNdc = parseInt(ndc)
   let bigNdc = Math.floor(smallNdc / 10) * 10
