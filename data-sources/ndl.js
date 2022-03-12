@@ -20,7 +20,7 @@ NDL.prototype.getNdcDetail = function(ndc){
 }
 
 NDL.prototype.getNdcCats = function(ndc){
-  let url = "https://script.google.com/macros/s/AKfycbzz0q0mzqCJ5NIMksZAO4iftSMJftrIJ0CKMiswKxQZrzpgKRWAO48Amroup8GMpayU/exec?ndc=" + ndc;
+  let url = "https://script.google.com/macros/s/AKfycby_z4xnlDcilOcAmfTUpxWdQPhmbSbB0ZyIpqURz1SgEGQ8WLZN56lyFAyvSfdwLPe_/exec?ndc=" + ndc;
   let r = http().get(url);
   return JSON.parse(r.body)
 }
