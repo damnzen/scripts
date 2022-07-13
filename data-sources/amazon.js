@@ -157,6 +157,7 @@ Amazon.prototype.extra = function(asin, getfull){
 //  if(/<h1 id="title"[\s\S]*?<\/h1>/.test(res.body)){
 //    o.title = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n/g, "")
 //  }
+  //スペックを取得
   if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--  Loading EDP related metadata -->)/.test(res.body)){
     //log(RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, ""));
     o["comment"] = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").replace(/^\s+/gm, "").trim();
@@ -165,18 +166,24 @@ Amazon.prototype.extra = function(asin, getfull){
     o["comment"] = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "").trim();
   }
   
-  if(/data-a-dynamic-image="(.*?)"/.test(res.body)){
+  //画像の取得
+  if(/data-old-hires="(.*?)"/.test(res.body)){
+    o["image"] = RegExp.$1;
+  }else if(/data-a-dynamic-image="(.*?)"/.test(res.body)){
     let imgdata = JSON.parse(RegExp.$1.replace(/&quot;/g, '"'));
     o["image"] = Object.keys(imgdata)[0];
-    }
+  }
+  
   //log(o.comment);
   //o.price = getPrice(res.body);   //fetchしたhtmlには価格情報がない
+  //メーカーの取得
   o["maker"] = getSpec(res.body, "メーカー");
   var d = getSpec(res.body, "Amazon.co.jp での取り扱い開始日");
   if(d){
     o["salesDate"] = new Date(d);
     o["salesDateUTC"] = o.salesDate.getTime();
   }
+  //型番の取得
   o["productCode"] = getSpec(res.body, "型番");
 //  if(/メーカー\n:\n<\/span>\n<span>(.*)<\/span>/.test(res.body)){
 //    o.maker = RegExp.$1;
@@ -186,14 +193,14 @@ Amazon.prototype.extra = function(asin, getfull){
   }
   
   //if(getfull){
-    //o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
-    o["amazonUrl"] = "https://www.amazon.co.jp/o/ASIN/" + asin + "/";
-	o.asin = asin;
-    if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
-      o["title"] = cleanTitle(RegExp.$1);
-      o["amount"] = getAmount(o.title);
-      if (o.productCode == "") o.productCode = getProductCode(o.title)
-    }
+  //o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ.jpg";
+  o["amazonUrl"] = "https://www.amazon.co.jp/o/ASIN/" + asin + "/";
+  o.asin = asin;
+  if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
+    o["title"] = cleanTitle(RegExp.$1);
+    o["amount"] = getAmount(o.title);
+    if (o.productCode == "") o.productCode = getProductCode(o.title)
+  }
   //}
   
   return o;
@@ -262,4 +269,10 @@ items.forEach(item => {
 });
 return resultList;
 
+}
+
+function testa0(){
+  var amz = new Amazon();
+  var r = amz.search("ビオレ");
+  Logger.log(r);
 }
