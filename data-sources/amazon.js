@@ -6,7 +6,7 @@ function decNumRefToString(decNumRef) {
 }
 
 function cleanTitle(title){
-	return title.replace(/【.*?】|\[.*?\]|〔 .*?〕/g,"")
+	return title.replace(/\(.*?\)|【.*?】|\[.*?\]|〔 .*?〕/g,"")
 }
 
 
@@ -159,11 +159,16 @@ Amazon.prototype.extra = function(asin, getfull){
 //  }
   if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--  Loading EDP related metadata -->)/.test(res.body)){
     //log(RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, ""));
-    o["comment"] = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").trim();
+    o["comment"] = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").replace(/^\s+/gm, "").trim();
   }else if(/<div id="featurebullets_feature_div"[\s\S]*<!--  Loading EDP related metadata -->/.test(res.body)){
     //Logger.log(RegExp.lastMatch);
     o["comment"] = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "").trim();
   }
+  
+  if(/data-a-dynamic-image="(.*?)"/.test(res.body)){
+    let imgdata = JSON.parse(RegExp.$1.replace(/&quot;/g, '"'));
+    o["image"] = Object.keys(imgdata)[0];
+    }
   //log(o.comment);
   //o.price = getPrice(res.body);   //fetchしたhtmlには価格情報がない
   o["maker"] = getSpec(res.body, "メーカー");
@@ -197,7 +202,8 @@ Amazon.prototype.extra = function(asin, getfull){
 //asinから直でデータを取得する場合
 Amazon.prototype.lookup = function(asin){
   var o = this.extra(asin, true);
-  o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ";
+  if (!o.image)
+    o.image = "http://images-jp.amazon.com/images/P/" + asin + ".09.LZZZZZZZ";
     return o
 }
 
