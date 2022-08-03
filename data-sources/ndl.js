@@ -15,13 +15,13 @@ NDL.prototype.getNdcDetail = function(ndc){
   var url = 'https://api-4pccg7v5ma-an.a.run.app/ndc9/' + ndc;
   var r = http().get(url);
   //Logger.log(ndc);
-  //Logger.log(r.body);
+  Logger.log(r.body);
   return JSON.parse(r.body)
 }
 
 NDL.prototype.getNdcCats = function(ndc){
   ndc = parseInt(ndc);
-  let url = "https://script.google.com/macros/s/AKfycby_z4xnlDcilOcAmfTUpxWdQPhmbSbB0ZyIpqURz1SgEGQ8WLZN56lyFAyvSfdwLPe_/exec?ndc=" + ndc;
+  let url = "https://script.google.com/macros/s/AKfycbxEU4HfDkzbl0TpKaz0I_oI7LT1KcPb5YT10znqzfRY0xqqQ9A/exec?ndc=" + ndc;
   let r = http().get(url);
   return JSON.parse(r.body)
 }
