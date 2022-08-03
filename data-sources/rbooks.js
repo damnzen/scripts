@@ -32,7 +32,8 @@ Gbooks.prototype.search = function(query) {
 		if ("publishedDate" in o)
 			o["publishedDate"] = formatDate(o["publishedDate"]);
 		if ("imageLinks" in o)
-			o["image"] = o["thumb"] = o["imageLinks"]["thumbnail"];
+			//o["image"] = o["thumb"] = o["imageLinks"]["thumbnail"];
+          o["thumb"] = o["imageLinks"]["thumbnail"];
 		if ("industryIdentifiers" in o ){
 			o["industryIdentifiers"].some(o1 => {
 				if (o1["type"] == "ISBN_13"){
