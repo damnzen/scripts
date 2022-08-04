@@ -160,10 +160,15 @@ Amazon.prototype.extra = function(asin, getfull){
   //スペックを取得
   if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--  Loading EDP related metadata -->)/.test(res.body)){
     //log(RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, ""));
-    o["comment"] = RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").replace(/^\s+/gm, "").trim();
+    //Logger.log(RegExp.lastMatch.replace(/<script[\s\S]*?(<\/script>|$)/g, ""))
+    o["comment"] = RegExp.lastMatch.replace(/\n+/g, "").replace(/<script[\s\S]*?(<\/script>|$)/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").replace(/^\s+/gm, "").trim();
+    //o["comment"] = RegExp.lastMatch
+    //o["comment"] = o["comment"].replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").replace(/^\s+/gm, "").trim();
+    
+  //価格下の概要欄から取得  
   }else if(/<div id="featurebullets_feature_div"[\s\S]*<!--  Loading EDP related metadata -->/.test(res.body)){
     //Logger.log(RegExp.lastMatch);
-    o["comment"] = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "").trim();
+    o["comment"] = RegExp.lastMatch.replace(/<div id="hsx-rpp-bullet-fits-message"[\s\S]*<\/script>/, "").replace(/<script.*?<\/script>/g, "").replace(/<.*?>/g, "").replace(/\n+/g, "\n").replace(/\nこの商品について\n/, "").trim();
   }
   
   //画像の取得
@@ -269,10 +274,4 @@ items.forEach(item => {
 });
 return resultList;
 
-}
-
-function testa0(){
-  var amz = new Amazon();
-  var r = amz.search("ビオレ");
-  Logger.log(r);
 }
