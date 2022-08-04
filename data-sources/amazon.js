@@ -158,7 +158,7 @@ Amazon.prototype.extra = function(asin, getfull){
 //    o.title = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n/g, "")
 //  }
   //スペックを取得
-  if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--  Loading EDP related metadata -->)/.test(res.body)){
+  if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--\s+Loading EDP related metadata -->)/.test(res.body)){
     //log(RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, ""));
     //Logger.log(RegExp.lastMatch.replace(/<script[\s\S]*?(<\/script>|$)/g, ""))
     o["comment"] = RegExp.lastMatch.replace(/\n+/g, "").replace(/<script[\s\S]*?(<\/script>|$)/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").replace(/^\s+/gm, "").trim();
@@ -172,11 +172,15 @@ Amazon.prototype.extra = function(asin, getfull){
   }
   
   //画像の取得
-  if(/data-old-hires="(.*?)"/.test(res.body)){
+  if(/{"landingImageUrl":"([^"]+?)"}/.test(res.body)){
     o["image"] = RegExp.$1;
-  }else if(/data-a-dynamic-image="(.*?)"/.test(res.body)){
-    let imgdata = JSON.parse(RegExp.$1.replace(/&quot;/g, '"'));
-    o["image"] = Object.keys(imgdata)[0];
+  }else if(/data-old-hires="([^"]+?)"/.test(res.body)){
+    o["image"] = RegExp.$1;
+    //  }else if(/data-a-dynamic-image="(.*?)"/.test(res.body)){
+//    let imgdata = JSON.parse(RegExp.$1.replace(/&quot;/g, '"'));
+//    o["image"] = Object.keys(imgdata)[Object.keys(imgdata).length -1];
+//  }else{
+//    createFile("ama.html", res.body)
   }
   
   //log(o.comment);
