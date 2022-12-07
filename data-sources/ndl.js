@@ -20,7 +20,8 @@ NDL.prototype.getNdcDetail = function(ndc){
 }
 
 NDL.prototype.getNdcCats = function(ndc){
-  ndc = parseInt(ndc);
+  ndc = ndc.replace(/\..*/, "");
+  //ndc = parseInt(ndc);
   let url = "https://script.google.com/macros/s/AKfycbxEU4HfDkzbl0TpKaz0I_oI7LT1KcPb5YT10znqzfRY0xqqQ9A/exec?ndc=" + ndc;
   let r = http().get(url);
   return JSON.parse(r.body)
