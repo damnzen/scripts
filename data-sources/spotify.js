@@ -64,7 +64,8 @@ Spotify.prototype.search = function(query, type, market, limit, offset){
   limit = limit || 20;
   market = market || 'JP';
   //var url = "https://api.spotify.com/v1/search?" + querystring(params);
-  var url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=${type}&market=${market}&limit=${limit}&offset=${offset}`;
+  //var url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=${type}&market=${market}&limit=${limit}&offset=${offset}`;
+  var url = "https://api.spotify.com/v1/search?q=" + encodeURIComponent(query) +"&type="  + type + "&market=" + market + "&limit=" + limit + "&offset=" + offset;
   let access_token = this.getAccessToken();
   let req = http();
   req.headers({
