@@ -110,8 +110,14 @@ Filmarks.prototype.lookup = function(id, limit, contents, type){
     if("Amazon Prime Video" in r) r["Amazon Prime Video"] = r["Amazon Prime Video"].replace("?tag=vod_contentsdetail-22","");
     //利用できるvodのリスト
     r["services"] = services.map(e =>{
-      e.name == "Amazon Prime Video" ? "Prime Video" : e.name;
-      e.name == "ディズニープラス" ? "Disney+" : e.name;
+      switch (e.name){
+        case "Amazon Prime Video":
+          return "Prime Video"
+        case "ディズニープラス":
+          return "Disney+"
+      default:
+        return e.name
+      }
     });
   }
   
