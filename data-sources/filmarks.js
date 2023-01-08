@@ -64,9 +64,10 @@ Filmarks.prototype.autocompleteForUrl= function(query){
   return rs2
 }
 
-Filmarks.prototype.lookup = function(id, limit, type){
+Filmarks.prototype.lookup = function(id, limit, contents, type){
   //id = id + "";
   limit = limit || 5;
+  contents = contents || "all";
   switch (type){
     case "movie":
       id = "movies/" + id;
@@ -77,7 +78,7 @@ Filmarks.prototype.lookup = function(id, limit, type){
     default :
       id = "" + id;
   }
-  var url = "https://api.filmarks.com/v2/" + id + "?contents=all&limit=" + limit;
+  var url = "https://api." + (id.indexOf("movie") == 0 ? "filmarks" : "dramarks") + ".com/v2/" + id + "?contents=" + encodeURIComponent(contents) +  "&limit=" + limit;
   
   var req = http();
   var res = req.get(url);
@@ -101,13 +102,18 @@ Filmarks.prototype.lookup = function(id, limit, type){
     if(actors) r["actors"] = actors.people.map(e => e.name);
   }
   r["copyright"] = r["copyright"] || "";
-    
-  var services =  r["vodServices"].filter(e => e.serviceTypes.indexOf("svod") >= 0);
-  //各vodサービスごとのURLを取得する。
-  services.forEach(e =>{r[e["name"]] = e["link"];});
-  if("Amazon Prime Video" in r) r["Amazon Prime Video"] = r["Amazon Prime Video"].replace("?tag=vod_contentsdetail-22","");
-  //利用できるvodのリスト
-  r["services"] = services.map(e => e.name == "Amazon Prime Video" ? "Prime Video" : e.name);
+  
+  if("vodServices" in r){
+    var services =  r["vodServices"].filter(e => e.serviceTypes.indexOf("svod") >= 0);
+    //各vodサービスごとのURLを取得する。
+    services.forEach(e =>{r[e["name"]] = e["link"];});
+    if("Amazon Prime Video" in r) r["Amazon Prime Video"] = r["Amazon Prime Video"].replace("?tag=vod_contentsdetail-22","");
+    //利用できるvodのリスト
+    r["services"] = services.map(e =>{
+      e.name == "Amazon Prime Video" ? "Prime Video" : e.name;
+      e.name == "ディズニープラス" ? "Disney+" : e.name;
+    });
+  }
   
 return r
 }
