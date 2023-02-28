@@ -19,11 +19,12 @@ Gbooks.prototype.lookup = function(isbn) {
 }
 
 Gbooks.prototype.search = function(query) {
-	var url = "https://www.googleapis.com/books/v1/volumes?q=" + query;
+	var url = "https://www.googleapis.com/books/v1/volumes?country=jp&q=" + query;
 	var req = http();
 	var res = req.get(url);
 	var json = JSON.parse(res.body);
 	var items =  json["items"];
+  if (!items) return [];
 	var results = items.map((item,idx) =>{
 		var o = item["volumeInfo"];
 		o["id"] = idx;
