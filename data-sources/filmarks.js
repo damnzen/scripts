@@ -107,7 +107,8 @@ Filmarks.prototype.lookup = function(id, limit, contents, type){
     var services =  r["vodServices"].filter(e => e.serviceTypes.indexOf("svod") >= 0);
     //各vodサービスごとのURLを取得する。
     services.forEach(e =>{r[e["name"]] = e["link"];});
-    if("Amazon Prime Video" in r) r["Amazon Prime Video"] = r["Amazon Prime Video"].replace("?tag=vod_contentsdetail-22","");
+    //if("Amazon Prime Video" in r) r["Amazon Prime Video"] = r["Amazon Prime Video"].replace("?tag=vod_contentsdetail-22","");
+    if("Prime Video" in r) r["Prime Video"] = r["Prime Video"].replace("?tag=vod_contentsdetail-22","");
     //利用できるvodのリスト
     r["services"] = services.map(e =>{
       switch (e.name){
