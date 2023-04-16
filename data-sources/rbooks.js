@@ -2,6 +2,7 @@ function formatDate(d){
 	d = d.replace(/[年月]/g,"-").replace(/[日頃]/g,"");
 	d = (d + "-01-01").slice(0,10)
     let out = Date.parse(d);
+    //let out = new Date(d);
   return out ? out : null
 }
 
