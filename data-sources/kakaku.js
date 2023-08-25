@@ -45,7 +45,7 @@ Kakaku.prototype.autocomp = function (query){
 }
 
 Kakaku.prototype.search = function (query) {
-  var url = 'https://app.kakaku.com/searchresults/v2/?=&n=60&p=1&query=' + encodeURIComponent(query) + '&searchcategorycode=&sort=clkrank_d';
+  var url = 'https://app.kakaku.com/searchresults/v3/?=&n=60&p=1&query=' + encodeURIComponent(query) + '&searchcategorycode=&sort=clkrank_d';
   var result = http().get(url);
   var json = JSON.parse(result.body);
   var items = json["products"];
