@@ -4,7 +4,7 @@ function jsonUrl(url) {
 }
 */
 function getProductCode(title){
-	var m = title.match(/(?=.*[0-9])[\-A-Z0-9\.]{6,}/g);
+	var m = title.match(/(?=[A-Z].*[0-9])[\-A-Z0-9\.]{6,}/g);
 	if (m){
 	 return m[m.length-1]
 	}else{
@@ -78,9 +78,11 @@ Kakaku.prototype.extra = function (id, priceorder, carriagearea) {
 //  var data_spec = JSON.parse(result.body);
  
   Object.assign(json, json.product);
+  //json["title"] = (json.seriesName ? json.seriesName + " " : "") + json.productName;
   json["title"] = json.productName;
   json["image"] = json.img ? json.img.mainImg.url.view : "";
   json["kakakuUrl"] = json.shareMessages.url;
+  json["category"] = [json.topCategoryName, json.categoryName].join("/");
   json["productCode"] = getProductCode(json.product.productName);
   //if (json.salesDate) json["salesDate"] = Date.parse(json.salesDate.replace(/[年月日]/g, "/"));
   if (json.product.salesDate){
@@ -93,7 +95,7 @@ Kakaku.prototype.extra = function (id, priceorder, carriagearea) {
 }
 
 Kakaku.prototype.shops = function (id, order, area) {
-  var url = 'https://app.kakaku.com/shoplist/v2/' + id + '/?page=1&per_page=1000000&type=0';
+  var url = 'https://app.kakaku.com/shoplist/v2/' + id + '/?page=1&per_page=1000000&type=2';
   if(order) url += '&priceorder=' + order;
   if(area) url += '&carriagearea=' + area;
   
