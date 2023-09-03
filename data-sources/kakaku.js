@@ -3,14 +3,7 @@ function jsonUrl(url) {
 	return 'https://script.google.com/macros/s/AKfycbxRjzQftnEWO7fwETplJpsJMC79UTlXCQGSYjmdac3vHGJYFida/exec?url=' + encodeURIComponent(url);
 }
 */
-function getProductCode(title){
-	var m = title.match(/(?=[A-Z].*[0-9])[\-A-Z0-9\.]{6,}/g);
-	if (m){
-	 return m[m.length-1]
-	}else{
-	 return ""
-	}
-}
+
 
 function cleanUrl(url){
 	if (/&Url=([^&]*)/.test(url)){
@@ -148,3 +141,44 @@ Kakaku.prototype.shopsWeb = function (productID, priceorder, carriagearea) {
   }
   return shops
 }
+
+/*
+Kakaku.prototype.search = function (query) {
+  var url = 'http://api.kakaku.com/WebAPI/ItemSearch/Ver1.0/ItemSearch.aspx?ApiKey=' + this.apiKey + '&Keyword=' + encodeURIComponent(query) + '&CategoryGroup=ALL&HitNum=20';
+  var result = http().get(jsonUrl(url));
+  var json = JSON.parse(result.body);
+  //log(result.body);
+  //log(json.query.results.ProductInfo);
+  var results = json["ProductInfo"];
+  var items;
+  if (!results){
+    items = [];
+  }else if (results.NumOfResult == 1){
+    items = [results.Item];
+  }else{
+    items = results.Item;
+  }
+  items.forEach(item => {
+    //log(item);
+    item['title'] = item.ProductName;
+    item['desc'] = [
+      item.MakerName,
+      item.CategoryName
+    ].join(' ');
+    
+    item['thumb'] = item.ImageUrl;
+    item['image'] = item.ImageUrl.replace("/m/", "/fullscale/");
+    //item['id'] = item.ProductID;
+    item['id'] = item;
+  });
+  return items;
+}
+
+Kakaku.prototype.extra = function (item) {
+  item["shops"] = Kakaku.prototype.getShops(item.ProductID);
+  item["id"] = null;
+  return item
+}
+*/
+
+
