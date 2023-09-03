@@ -1,4 +1,3 @@
-
 function decNumRefToString(decNumRef) {
 	return decNumRef.replace(/&#(\d+);/ig, function(match, $1, idx, all) {
 		return String.fromCharCode($1);
@@ -158,10 +157,10 @@ Amazon.prototype.extra = function(asin, getfull){
 //    o.title = RegExp.lastMatch.replace(/<.*?>/g, "").replace(/\n/g, "")
 //  }
   //スペックを取得
-  if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--\s+Loading EDP related metadata -->)/.test(res.body)){
+  if(/<div id="productOverview_feature_div"[\s\S]*?(<\/table>|<!--\s+Loading EDP related metadata -->|a-spacing-top-mini">)/.test(res.body)){
     //log(RegExp.lastMatch.replace(/\n+/g, "").replace(/<style.*?<\/style>/g, ""));
     //Logger.log(RegExp.lastMatch.replace(/<script[\s\S]*?(<\/script>|$)/g, ""))
-    o["comment"] = RegExp.lastMatch.replace(/\n+/g, "").replace(/<script[\s\S]*?(<\/script>|$)/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").replace(/^\s+/gm, "").trim();
+    o["comment"] = RegExp.lastMatch.replace(/\n+/g, "").replace(/<script[\s\S]*?(<\/script>|$)/g, "").replace(/<style.*?<\/style>/g, "").replace(/<td class="a-span9">/g, " : ").replace(/\s+/g, " ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").replace(/^\s+/gm, "").trim();
     //o["comment"] = RegExp.lastMatch
     //o["comment"] = o["comment"].replace(/<td class="a-span9">/g, " : ").replace(/<\/tr>/g, "\n").replace(/<.*?>/g, "").replace(/^\s+/gm, "").trim();
     
