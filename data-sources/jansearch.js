@@ -51,7 +51,7 @@ JanSearch.prototype.search= function(query){
     let r = http().get(url);
     let items = r.body.match(/<h4 class="title">JANコード:[\s\S]*?<\/p>/g);
     if (items.length){
-        let res = items.map(item => {
+        let products = items.map(item => {
             let m = item.match(/<h4 class="title">JANコード:(\d+)<\/h4>[\s\S]*?<img src="([^"]*)".*?>\s*(.*?)\s*<\/p>/);
             return {
                 "id" : m[1],
@@ -62,7 +62,7 @@ JanSearch.prototype.search= function(query){
                 "image" : this.BASE_URL + m[2].replace("/item/", "/item/d/")
             }
         })
-        return res
+        return products
     }
     
 }
@@ -135,7 +135,7 @@ JanSearch.prototype.extra = function(jan){
     }
 
     this.convertCategory = function (cats){
-        if(!cats) return null
+        if(!cats) return [];
         let bigcat, smallcat;
         bigcat = this.CATEGORIES_MAP[cats[0]];
         if(this.BIG_CATEGORY_BREAKDOWN[bigcat]){
@@ -149,27 +149,37 @@ JanSearch.prototype.extra = function(jan){
     let url = this.BASE_URL + "/" + jan + "/";
     let r = http().get(url);
 
-    let res = {
-        "title" : getTableVal(r.body, "商品名"),
+    let tables = r.body.match(/<table [\s\S]*<\/table>/g);
+    if (!tables.length) return {}
+
+    let product = {
+        "title" : getTableVal(tables[0], "商品名"),
         "jan" : jan,
-        "maker" : getTableVal(r.body, "会社名").replace("株式会社", ""),
-        "productcode" : getTableVal(r.body, "品番/型番"),
-        "saledate" : parseJapaneseDateString(getTableVal(r.body, "発売日")),
-        //"category" : getTableVal(r.body, "商品ジャンル").split(" &gt ")
-        "category" : this.convertCategory(getTableVal(r.body, "商品ジャンル").split(" &gt ")),
-    }
-    let img = getTableVal(r.body, "商品イメージ", true);
-    if (img && /src="(.*?)"/.test(img)){
-        res["image"] = this.BASE_URL + RegExp.$1;
+        "maker" : getTableVal(tables[0], "会社名").replace("株式会社", ""),
+        "productcode" : getTableVal(tables[0], "品番/型番"),
+        "saledate" : parseJapaneseDateString(getTableVal(tables[0], "発売日")),
+        //"category" : getTableVal(tables[0], "商品ジャンル").split(" &gt ")
     }
 
-    if(/<h3>商品詳細情報<\/h3>[\s\S]*<\/table>/.test(r.body)){
-        let table = RegExp.lastMatch;
-        let spec = parseHTMLTable(table);
-        res["spec"] = spec.join("\n");
-        let amount = getTableVal(table, "内容量");
-        if (!amount) amount = amountFromTitle(res.title);
-        res["amount"] = amount;
+    let org_category = getTableVal(tables[0], "商品ジャンル").split(" &gt ");
+    product["category"] = this.convertCategory(org_category).join("/");
+
+    let img = getTableVal(tables[0], "商品イメージ", true);
+    if (img && /src="(.*?)"/.test(img)){
+        product["image"] = this.BASE_URL + RegExp.$1;
     }
-    return res
+
+    //if(/<h3>商品詳細情報<\/h3>[\s\S]*?<\/table>/.test(r.body)){
+    let amount;
+    if(tables.length>1){
+        let table = tables[1];
+        let spec = parseHTMLTable(table);
+        product["spec"] = spec.join("\n");
+        amount = getTableVal(table, "内容量");
+    }
+
+    if (!amount) amount = amountFromTitle(product.title);
+    product["amount"] = amount;
+
+    return product
 }
