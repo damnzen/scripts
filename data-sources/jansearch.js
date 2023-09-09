@@ -128,7 +128,7 @@ JanSearch.prototype.extra = function(jan){
           const month = parseInt(dateArray[2]) - 1; // 月は0から始まるため、1を引きます
           const day = parseInt(dateArray[3]);
       
-          return new Date(year, month, day).getTime();
+          return new Date(year, month, day);
         } else {
           return null
         }
@@ -149,7 +149,7 @@ JanSearch.prototype.extra = function(jan){
     let url = this.BASE_URL + "/" + jan + "/";
     let r = http().get(url);
 
-    let tables = r.body.match(/<table [\s\S]*<\/table>/g);
+    let tables = r.body.match(/<table [\s\S]*?<\/table>/g);
     if (!tables.length) return {}
 
     let product = {
@@ -157,10 +157,11 @@ JanSearch.prototype.extra = function(jan){
         "jan" : jan,
         "maker" : getTableVal(tables[0], "会社名").replace("株式会社", ""),
         "productCode" : getTableVal(tables[0], "品番/型番"),
-        "saleDateUTC" : parseJapaneseDateString(getTableVal(tables[0], "発売日")),
+        "salesDate" : parseJapaneseDateString(getTableVal(tables[0], "発売日")),
         //"category" : getTableVal(tables[0], "商品ジャンル").split(" &gt ")
     }
 
+    if (product["salesDate"]) product["salesDateUTC"] = product["salesDate"].getTime();
     let org_category = getTableVal(tables[0], "商品ジャンル").split(" &gt ");
     product["genre"] = this.convertCategory(org_category).join("/");
 
