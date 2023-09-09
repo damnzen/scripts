@@ -49,21 +49,43 @@ function JanSearch(){
 JanSearch.prototype.search= function(query){
     let url = this.BASE_URL + "/word/?q=" + encodeURIComponent(query);
     let r = http().get(url);
-    let items = r.body.match(/<h4 class="title">JANコード:[\s\S]*?<\/p>/g);
-    if (items.length){
+    const regex = /<h4 class="title">(?:JAN|EAN)コード:(\d+)<\/h4>[\s\S]*?<img src="([^"]*)".*?>\s*(.*?)\s*<\/p>/g;
+    let m;
+    let products = [];
+    while ((m = regex.exec(r.body)) !== null) {
+        const product =  {
+            "id" : m[1],
+            "jan" : m[1],
+            "title" : m[3],
+            "desc" : m[1],
+            "url" : this.BASE_URL + "/" + m[1] + "/",
+            "thumb" : this.BASE_URL + m[2],
+            "image" : this.BASE_URL + m[2].replace("/item/", "/item/d/")
+        }
+        products.push(product);
+        //console.log(`$1: ${group1}, $2: ${group2}`);
+    }
+    return products
+    /* 
+    let items = r.body.match(/<h4 class="title">(JAN|EAN)コード:[\s\S]*?<\/p>/g);
+    if (items && items.length){
         let products = items.map(item => {
-            let m = item.match(/<h4 class="title">JANコード:(\d+)<\/h4>[\s\S]*?<img src="([^"]*)".*?>\s*(.*?)\s*<\/p>/);
+            let m = item.match(/<h4 class="title">(JAN|EAN)コード:(\d+)<\/h4>[\s\S]*?<img src="([^"]*)".*?>\s*(.*?)\s*<\/p>/);
             return {
                 "id" : m[1],
                 "jan" : m[1],
                 "title" : m[3],
+                "desc" : m[1],
                 "url" : this.BASE_URL + "/" + m[1] + "/",
                 "thumb" : this.BASE_URL + m[2],
                 "image" : this.BASE_URL + m[2].replace("/item/", "/item/d/")
             }
         })
         return products
+    }else{
+        return []
     }
+    */
     
 }
 
@@ -150,7 +172,7 @@ JanSearch.prototype.extra = function(jan){
     let r = http().get(url);
 
     let tables = r.body.match(/<table [\s\S]*?<\/table>/g);
-    if (!tables.length) return {}
+    if (!tables || !tables.length) return {}
 
     let product = {
         "title" : getTableVal(tables[0], "商品名"),
@@ -167,7 +189,9 @@ JanSearch.prototype.extra = function(jan){
 
     let img = getTableVal(tables[0], "商品イメージ", true);
     if (img && /src="(.*?)"/.test(img)){
-        product["image"] = this.BASE_URL + RegExp.$1;
+        let image_url = this.BASE_URL + RegExp.$1;
+        if (image_url != "/assets/img/item/now_printing.jpg")
+            product["image"] = image_url;
     }
 
     //if(/<h3>商品詳細情報<\/h3>[\s\S]*?<\/table>/.test(r.body)){
@@ -177,6 +201,7 @@ JanSearch.prototype.extra = function(jan){
         let spec = parseHTMLTable(table);
         product["comment"] = spec.join("\n");
         amount = getTableVal(table, "内容量");
+        if(!/^\d/.test(amount)) amount = null;
     }
 
     if (!amount) amount = amountFromTitle(product.title);
