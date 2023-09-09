@@ -156,13 +156,13 @@ JanSearch.prototype.extra = function(jan){
         "title" : getTableVal(tables[0], "商品名"),
         "jan" : jan,
         "maker" : getTableVal(tables[0], "会社名").replace("株式会社", ""),
-        "productcode" : getTableVal(tables[0], "品番/型番"),
-        "saledate" : parseJapaneseDateString(getTableVal(tables[0], "発売日")),
+        "productCode" : getTableVal(tables[0], "品番/型番"),
+        "saleDateUTC" : parseJapaneseDateString(getTableVal(tables[0], "発売日")),
         //"category" : getTableVal(tables[0], "商品ジャンル").split(" &gt ")
     }
 
     let org_category = getTableVal(tables[0], "商品ジャンル").split(" &gt ");
-    product["category"] = this.convertCategory(org_category).join("/");
+    product["genre"] = this.convertCategory(org_category).join("/");
 
     let img = getTableVal(tables[0], "商品イメージ", true);
     if (img && /src="(.*?)"/.test(img)){
@@ -174,7 +174,7 @@ JanSearch.prototype.extra = function(jan){
     if(tables.length>1){
         let table = tables[1];
         let spec = parseHTMLTable(table);
-        product["spec"] = spec.join("\n");
+        product["comment"] = spec.join("\n");
         amount = getTableVal(table, "内容量");
     }
 
