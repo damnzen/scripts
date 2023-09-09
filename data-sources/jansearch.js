@@ -50,23 +50,21 @@ JanSearch.prototype.search= function(query){
     let url = this.BASE_URL + "/word/?q=" + encodeURIComponent(query);
     let r = http().get(url);
     const regex = /<h4 class="title">(?:JAN|EAN)コード:(\d+)<\/h4>[\s\S]*?<img src="([^"]*)".*?>\s*(.*?)\s*<\/p>/g;
-    let m = regex.exec(r.body);
+    let m;
     let products = [];
-    //while ((m = regex.exec(r.body)) !== null) {
-    while(m !==null){
-        const product =  {
+    while ((m = regex.exec(r.body)) !== null) {
+        let product =  {
             "source" : "jan",
             "id" : m[1],
             "jan" : m[1],
             "title" : m[3],
-            "desc" : m[1],
+            "desc" :"🅹" + m[1],
             "url" : this.BASE_URL + "/" + m[1] + "/",
             "thumb" : this.BASE_URL + m[2],
             "image" : this.BASE_URL + m[2].replace("/item/", "/item/d/")
         }
         products.push(product);
         //console.log(`$1: ${group1}, $2: ${group2}`);
-        m = regex.exec(r.body);
     }
     return products
     /* 
