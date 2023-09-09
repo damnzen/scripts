@@ -43,7 +43,9 @@ function JanSearch(){
         "ヘルス＆ビューティー" : true,
         "ホビー" : false,
     }
-    
+    this.formatTitle = function(title){
+        return title.replace(/\*(?=\d)/, "×")
+    }
 }
 
 JanSearch.prototype.search= function(query){
@@ -57,8 +59,8 @@ JanSearch.prototype.search= function(query){
             "source" : "jan",
             "id" : m[1],
             "jan" : m[1],
-            "title" : m[3],
-            "desc" :"🅹" + m[1],
+            "title" : this.formatTitle(m[3]),
+            "desc" : "🅹" + m[1],
             "url" : this.BASE_URL + "/" + m[1] + "/",
             "thumb" : this.BASE_URL + m[2],
             "image" : this.BASE_URL + m[2].replace("/item/", "/item/d/")
@@ -176,7 +178,7 @@ JanSearch.prototype.extra = function(jan){
     if (!tables || !tables.length) return {}
 
     let product = {
-        "title" : getTableVal(tables[0], "商品名"),
+        "title" : this.formatTitle(getTableVal(tables[0], "商品名")),
         "jan" : jan,
         "maker" : getTableVal(tables[0], "会社名").replace("株式会社", ""),
         "productCode" : getTableVal(tables[0], "品番/型番"),
