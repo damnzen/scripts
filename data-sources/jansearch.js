@@ -1,5 +1,49 @@
 function JanSearch(){
     this.BASE_URL = "https://www.jancode.xyz";
+    this.CATEGORIES_MAP = {
+        "レディースファッション"  :  "ファッション",
+        "メンズファッション"  :  "ファッション",
+        "インナー・下着・ナイトウェア"  :  "ファッション",
+        "バッグ・小物・ブランド雑貨"  :  "ファッション",
+        "靴"  :  "ファッション",
+        "腕時計"  :  "ファッション",
+        "ジュエリー・アクセサリー"  :  "ファッション",
+        "家電"  :  "家電",
+        "TV・オーディオ・カメラ" : "家電",
+        "パソコン・周辺機器" : "パソコン",
+        "スマートフォン・タブレット" : "パソコン",
+        "食品" : "食品",
+        "スイーツ・お菓子" : "食品",
+        "水・ソフトドリンク" : "食品",
+        "ビール・洋酒" : "食品",
+        "日本酒・焼酎" : "食品",
+        "日用品雑貨・文房具・手芸" : "日用品",
+        "ダイエット・健康" : "ヘルス＆ビューティー",
+        "医薬品・コンタクト・介護" : "ヘルス＆ビューティー",
+        "美容・コスメ・香水" : "ヘルス＆ビューティー",
+        "キッズ・ベビー・マタニティ" : "日用品",
+        "インテリア・寝具・収納" : "日用品",
+        "キッチン用品・食器・調理器具" : "日用品",
+        "ペット・ペットグッズ" : "日用品",
+        "花・ガーデン・DIY" : "日用品",
+        "スポーツ・アウトドア" : "日用品",
+        "車用品・バイク用品" : "日用品",
+        "おもちゃ" : "ホビー",
+        "本・雑誌・コミック" : "ホビー",
+        "CD・DVD" : "ホビー",
+        "ホビー" : "ホビー",
+        "楽器・音響機器" : "ホビー"
+    };
+    this.BIG_CATEGORY_BREAKDOWN = {
+        "ファッション" : false,
+        "家電" : true,
+        "パソコン" : true,
+        "食品" : false,
+        "日用品" : true,
+        "ヘルス＆ビューティー" : true,
+        "ホビー" : false,
+    }
+    
 }
 
 JanSearch.prototype.search= function(query){
@@ -84,10 +128,22 @@ JanSearch.prototype.extra = function(jan){
           const month = parseInt(dateArray[2]) - 1; // 月は0から始まるため、1を引きます
           const day = parseInt(dateArray[3]);
       
-          return new Date(year, month, day);
+          return new Date(year, month, day).getTime();
         } else {
           return null
         }
+    }
+
+    this.convertCategory = function (cats){
+        if(!cats) return null
+        let bigcat, smallcat;
+        bigcat = this.CATEGORIES_MAP[cats[0]];
+        if(this.BIG_CATEGORY_BREAKDOWN[bigcat]){
+            smallcat = cats[cats.length-1];
+        }else{
+            smallcat = cats[0];
+        }
+        return [bigcat,smallcat];
     }
 
     let url = this.BASE_URL + "/" + jan + "/";
@@ -96,10 +152,11 @@ JanSearch.prototype.extra = function(jan){
     let res = {
         "title" : getTableVal(r.body, "商品名"),
         "jan" : jan,
-        "maker" : getTableVal(r.body, "会社名"),
+        "maker" : getTableVal(r.body, "会社名").replace("株式会社", ""),
         "productcode" : getTableVal(r.body, "品番/型番"),
         "saledate" : parseJapaneseDateString(getTableVal(r.body, "発売日")),
-        "category" : getTableVal(r.body, "商品ジャンル").split(" &gt ")
+        //"category" : getTableVal(r.body, "商品ジャンル").split(" &gt ")
+        "category" : this.convertCategory(getTableVal(r.body, "商品ジャンル").split(" &gt ")),
     }
     let img = getTableVal(r.body, "商品イメージ", true);
     if (img && /src="(.*?)"/.test(img)){
