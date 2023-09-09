@@ -54,6 +54,7 @@ JanSearch.prototype.search= function(query){
     let products = [];
     while ((m = regex.exec(r.body)) !== null) {
         const product =  {
+            "source" : "jan",
             "id" : m[1],
             "jan" : m[1],
             "title" : m[3],

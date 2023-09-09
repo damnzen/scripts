@@ -9,7 +9,7 @@ function cleanTitle(title){
 }
 
 
-
+/*
 function getAmount(title){
 	var m = title.match(/\d+(本|袋|枚|ml|mL|ML|g)/g);
 	if (m){
@@ -18,6 +18,7 @@ function getAmount(title){
 	 return ""
 	}
 }
+*/
 
 function urlToAsin(url){
     var regex = /www\.amazon\.co.jp\/([\w-%]+\/)?(dp|gp\/product)\/(\w+\/)?(\w{10})/;
@@ -123,12 +124,12 @@ req.headers({"User-Agent": "Mozilla/5.0 (Linux; Android 9.0; Z832 Build/MMB29M) 
 		if (image.indexOf("//")==0) return;
 		//log(/<img src="(.*)"[\s\S]*?alt="(.*)"/.exec(div));
 		o = {
-          "source" : "amazon",
+      "source" : "amazon",
 			"id" : asin,
 			"asin" : asin,
 			"title" : title,
 //			"desc" : getProductCode(m[2])　+ " " + title,
-			"desc" : title,
+			"desc" :  "🅰" + title,
 			"thumb" : m[1],
 			"image" : image,
 			"amazonUrl" : "https://www.amazon.co.jp/o/ASIN/" + asin + "/",

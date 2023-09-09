@@ -50,7 +50,7 @@ Kakaku.prototype.search = function (query) {
                 item['thumb'] = item.imgUrls.list;
                 item['image'] = item.imgUrls.catlog;
                 //item["kakakuUrl"] = "https://kakaku.com/item/" + item["productID"] + "/"
-                item['desc'] = [item.maker, item.categoryName, item.comment].join(' ');
+                item['desc'] = ['🅺', item.maker, item.categoryName, item.comment].join(' ');
                 if(/容量：([^\s]+)\s/.test(item.comment)) item.amount = RegExp.$1;
   });
 return items;
