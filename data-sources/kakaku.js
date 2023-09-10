@@ -56,6 +56,20 @@ Kakaku.prototype.search = function (query) {
 return items;
 }
 
+Kakaku.prototype.janSearch = function(jan, returnId){
+  let url = 'https://app.kakaku.com/jansearch/v1?jancode=' + jan;
+  let req = http();
+  req.headers({"X-App-KAT" : "MjAyMzA5MTBLS0PjgqLjg5fjg6oxNzI2MDY="});
+  let result = req.get(url);
+  let json = JSON.parse(result.body);
+  let productID = json.productID
+  if(!returnId){
+    return productID ? this.extra(productID) : {};
+  }else{
+    return json.productID
+  }
+}
+
 
 Kakaku.prototype.extra = function (id, priceorder, carriagearea) {
   //var url = 'https://app.kakaku.com/itemview/v1/' + id + `/?priceorder=${priceorder}&carriagearea=${carriagearea}`;
@@ -143,7 +157,7 @@ Kakaku.prototype.shopsWeb = function (productID, priceorder, carriagearea) {
 }
 
 Kakaku.prototype.janFromShops = function(shops){
-  let shopList = shops.shopList;
+  let shopList = shops.shopList || [];
   let m;
   let r = shopList.find(s =>  m = s.cpcUrl.match(/item\.rakuten\.co\.jp%2[\w-]+%2f(\d+)%2f/));
   return r ? m[1] : null
