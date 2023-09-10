@@ -60,7 +60,7 @@ JanSearch.prototype.search= function(query){
             "id" : m[1],
             "jan" : m[1],
             "title" : this.formatTitle(m[3]),
-            "desc" : "🅹" + m[1],
+            "desc" : "🅹" + m[3],
             "url" : this.BASE_URL + "/" + m[1] + "/",
             "thumb" : this.BASE_URL + m[2],
             "image" : this.BASE_URL + m[2].replace("/item/", "/item/d/")

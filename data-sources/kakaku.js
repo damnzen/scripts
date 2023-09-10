@@ -142,6 +142,13 @@ Kakaku.prototype.shopsWeb = function (productID, priceorder, carriagearea) {
   return shops
 }
 
+Kakaku.prototype.janFromShops = function(shops){
+  let shopList = shops.shopList;
+  let m;
+  let r = shopList.find(s =>  m = s.cpcUrl.match(/item\.rakuten\.co\.jp%2[\w-]+%2f(\d+)%2f/));
+  return r ? m[1] : null
+}
+
 /*
 Kakaku.prototype.search = function (query) {
   var url = 'http://api.kakaku.com/WebAPI/ItemSearch/Ver1.0/ItemSearch.aspx?ApiKey=' + this.apiKey + '&Keyword=' + encodeURIComponent(query) + '&CategoryGroup=ALL&HitNum=20';
@@ -180,5 +187,4 @@ Kakaku.prototype.extra = function (item) {
   return item
 }
 */
-
 

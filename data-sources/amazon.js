@@ -20,12 +20,6 @@ function getAmount(title){
 }
 */
 
-function urlToAsin(url){
-    var regex = /www\.amazon\.co.jp\/([\w-%]+\/)?(dp|gp\/product)\/(\w+\/)?(\w{10})/;
-    if (regex.test(url)){
-      return RegExp.$4;
-    }
-}
 //function productCodeFromTitle(title){
   
 //}
