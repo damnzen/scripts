@@ -61,12 +61,14 @@ Kakaku.prototype.janSearch = function(jan, returnId){
   let req = http();
   req.headers({"X-App-KAT" : "MjAyMzA5MTBLS0PjgqLjg5fjg6oxNzI2MDY="});
   let result = req.get(url);
-  let json = JSON.parse(result.body);
-  let productID = json.productID
-  if(!returnId){
-    return productID ? this.extra(productID) : {};
-  }else{
-    return json.productID
+  if (result.code == 200){
+    let json = JSON.parse(result.body);
+    let productID = json.productID
+    if(!returnId){
+      return productID ? this.extra(productID) : {};
+    }else{
+      return json.productID
+    }  
   }
 }
 
