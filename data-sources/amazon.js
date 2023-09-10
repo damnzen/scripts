@@ -202,7 +202,7 @@ Amazon.prototype.extra = function(asin, getfull){
   if(/<span id="productTitle" .*?>\s*([^<]*?)\s*<\/span>/.test(res.body)){
     o["title"] = cleanTitle(RegExp.$1);
     o["amount"] = getAmount(o.title);
-    if (o.productCode == "") o.productCode = getProductCode(o.title)
+    if (o.productCode == "") o.productCode = productCodeFromTitle(o.title)
   }
   //}
   
