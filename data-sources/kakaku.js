@@ -76,7 +76,7 @@ Kakaku.prototype.extra = function (id, priceorder, carriagearea) {
   json["image"] = json.img ? json.img.mainImg.url.view : "";
   json["kakakuUrl"] = json.shareMessages.url;
   json["category"] = [json.topCategoryName, json.categoryName].join("/");
-  json["productCode"] = getProductCode(json.product.productName);
+  json["productCode"] = productCodeFromTitle(json.product.productName);
   //if (json.salesDate) json["salesDate"] = Date.parse(json.salesDate.replace(/[年月日]/g, "/"));
   if (json.product.salesDate){
     //json["salesDate"] = new Date((json.salesDate.replace(/[年月日]/g, "/") + "01").substr(0,10));
