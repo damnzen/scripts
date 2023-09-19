@@ -49,7 +49,7 @@ function JanSearch(){
 }
 
 JanSearch.prototype.search= function(query){
-    let url = this.BASE_URL + "/word/?q=" + encodeURIComponent(query);
+    let url = this.BASE_URL + "/word/?q=" + encodeURIComponent(query.replace("-", " "));
     let r = http().get(url);
     const regex = /<h4 class="title">(?:JAN|EAN)コード:(\d+)<\/h4>[\s\S]*?<img src="([^"]*)".*?>\s*(.*?)\s*<\/p>/g;
     let m;

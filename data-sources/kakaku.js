@@ -8,12 +8,10 @@ function jsonUrl(url) {
 function cleanUrl(url){
 	if (/&Url=([^&]*)/.test(url)){
 	  url = decodeURIComponent(RegExp.$1);
-	  if(/\?url=(.*)/.test(url)){ //Amazon対応
-	    url = decodeURIComponent(RegExp.$1);
-	  }else if(/&vc_url=(.*)/.test(url)){ //Value Commerse
+	  if(/[&\?](?:url|vc_url|pc)=([^&]*)/.test(url)){ //Value Commerse
         url = decodeURIComponent(RegExp.$1);
     }
-    url = url.replace(/\?.*/, '');
+    //url = url.replace(/\?.*/, '');
   }
   return url
 }
@@ -159,7 +157,10 @@ Kakaku.prototype.shopsWeb = function (productID, priceorder, carriagearea) {
 Kakaku.prototype.janFromShops = function(shops){
   let shopList = shops.shopList || [];
   let m;
-  let r = shopList.find(s =>  m = s.cpcUrl.match(/item\.rakuten\.co\.jp%2[\w-]+%2f(\d+)%2f/));
+  //let r = shopList.find(s =>  m = s.cpcUrl.match(/item\.rakuten\.co\.jp%2[\w-]+%2f(\d+)%2f/));
+  let r = shopList.find(s =>  {
+    if(s.mallIconType == "rakuten") return m = cleanUrl(s.cpcUrl).match(/item\.rakuten\.co\.jp\/\w+\/(\d+)/)
+  });
   return r ? m[1] : null
 }
 
