@@ -12,12 +12,10 @@ function cleanUrl(url){
 	    url = decodeURIComponent(RegExp.$1);
 	  }else if(/&vc_url=(.*)/.test(url)){ //Value Commerse
         url = decodeURIComponent(RegExp.$1);
-      }
+    }
     url = url.replace(/\?.*/, '');
-	  return url;
-	}else{
-		return ""
-	}
+  }
+  return url
 }
 
 function Kakaku(apiKey) {
