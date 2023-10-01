@@ -11,7 +11,8 @@ function cleanUrl(url){
 	  if(/[&\?](?:url|vc_url|pc)=([^&]*)/.test(url)){ //Value Commerse
         url = decodeURIComponent(RegExp.$1);
     }
-    //url = url.replace(/\?.*/, '');
+    // ヨドバシなどのURLを登録する時に余計な文字を付けないため、クエリを削除する。
+    url = url.replace(/\?.*/, '');
   }
   return url
 }
