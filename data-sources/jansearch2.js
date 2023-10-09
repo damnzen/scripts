@@ -1,9 +1,10 @@
-function JanSearch(){
+function JanSearch(searchUrl){
     this.BASE_URL = "https://dennou-research.com/";
     this.formatTitle = function(str){return str}
     this.cleanTitle = function(title){
         return title.replace(/\(.*?\)|【.*?】|\[.*?\]|〔 .*?〕/g,"")
     }
+    this.searchUrl = searchUrl;
 }
 
 JanSearch.prototype.search= function(query){
@@ -15,7 +16,7 @@ JanSearch.prototype.search= function(query){
     let r = req.post(url, body);
     //log(r.body);
     
-    let items = r.body.match(/<article>[\s\S]*?<\/article>/g);
+    let items = r.body.match(/<article>[\s\S]*?<\/article>/g) || [];
     
     let products = items.map(item =>{
         let n = item.match(/"\/detail\/(\d+)/);
