@@ -72,7 +72,7 @@ JanSearch.prototype.extra = function(jan){
         const productInfo = {};
       
         // 正規表現パターンを定義
-        const pattern = /<li><span class="cravel-search-results-name">(.*?)<\/span> :\s([\s\S]*?)</g;
+        const pattern = /<li><span class="cravel-search-results-name">(.*?)<\/span> :\s(.*?)</g;
         
         let match;
         while ((match = pattern.exec(html)) !== null) {
