@@ -8,7 +8,8 @@ function JanSearch(searchUrl){
 }
 
 JanSearch.prototype.search= function(query){
-    let url = this.BASE_URL + "search/";
+    let url = this.searchUrl || this.BASE_URL + "search/";
+
     let body = encodeURI("q=" + query)
     //url = 'https://dennou-research.com/search/?s=67340357f312a39254dc3d092d107121'
     let req = http();
@@ -18,8 +19,9 @@ JanSearch.prototype.search= function(query){
     
     let items = r.body.match(/<article>[\s\S]*?<\/article>/g) || [];
     
-    let products = items.map(item =>{
+    let products = items.filter(item=> item.indexOf("www.amazon.co.jp") >= 0).map(item =>{
         let n = item.match(/"\/detail\/(\d+)/);
+        if (!n) log(item);
         let jan = n[1];
         let m = item.match(/<img .* src="(.*?)" alt="(.*?)"/);
         
@@ -28,7 +30,8 @@ JanSearch.prototype.search= function(query){
             "id" : jan,
             "jan" : jan,
             "title" : this.formatTitle(m[2]),
-            "desc" : "🅹" + m[2],
+            "productCode" : productCodeFromTitle(m[2]),
+            "amount" : amountFromTitle(m[2]),
             "url" : this.BASE_URL + "detail/" + jan + "/",
             "thumb" : m[1],
             "image" : m[1].replace("._SL500_", ""),
@@ -38,7 +41,7 @@ JanSearch.prototype.search= function(query){
         // if(/ブランド<\/span> : (.*?)<\/li>/.test(item)) brand = RegExp.$1
         // let amount = amountFromTitle(m[2]);
         
-        // product["desc"] = ["🅹", brand, amount, m[2]].join(" ");
+         product["desc"] = ["🅹", product.productCode, product.amount, m[2]].join(" ");
         return product
     })
 
