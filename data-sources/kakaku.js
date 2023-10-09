@@ -5,20 +5,22 @@ function jsonUrl(url) {
 */
 
 
-function cleanUrl(url){
-	if (/&Url=([^&]*)/.test(url)){
-	  url = decodeURIComponent(RegExp.$1);
-	  if(/[&\?](?:url|vc_url|pc)=([^&]*)/.test(url)){ //Value Commerse
-        url = decodeURIComponent(RegExp.$1);
-    }
-    // ヨドバシなどのURLを登録する時に余計な文字を付けないため、クエリを削除する。
-    url = url.replace(/\?.*/, '');
-  }
-  return url
-}
-
 function Kakaku(apiKey) {
   this.apiKey = apiKey;
+  this.cleanTitle = function (title){
+    return title.replace(/\s*\[.*?\]/, "")
+  }
+  this.cleanUrl = function (url){
+    if (/&Url=([^&]*)/.test(url)){
+      url = decodeURIComponent(RegExp.$1);
+      if(/[&\?](?:url|vc_url|pc)=([^&]*)/.test(url)){ //Value Commerse
+          url = decodeURIComponent(RegExp.$1);
+      }
+      // ヨドバシなどのURLを登録する時に余計な文字を付けないため、クエリを削除する。
+      url = url.replace(/\?.*/, '');
+    }
+    return url
+  }
 }
 
 Kakaku.prototype.autocomp = function (query){
@@ -43,7 +45,7 @@ Kakaku.prototype.search = function (query) {
   items.forEach(item =>{
                 item['source'] = 'kakaku';
                 item["id"] = item["productID"];
-                item["title"] = item["productName"];
+                item["title"] = this.cleanTitle(item["productName"]);
                 item['thumb'] = item.imgUrls.list;
                 item['image'] = item.imgUrls.catlog;
                 //item["kakakuUrl"] = "https://kakaku.com/item/" + item["productID"] + "/"
@@ -85,7 +87,7 @@ Kakaku.prototype.extra = function (id, priceorder, carriagearea) {
  
   Object.assign(json, json.product);
   //json["title"] = (json.seriesName ? json.seriesName + " " : "") + json.productName;
-  json["title"] = json.productName;
+  json["title"] = this.cleanTitle(json.productName);
   json["image"] = json.img ? json.img.mainImg.url.view : "";
   json["kakakuUrl"] = json.shareMessages.url;
   json["category"] = [json.topCategoryName, json.categoryName].join("/");
@@ -160,7 +162,7 @@ Kakaku.prototype.janFromShops = function(shops){
   let m;
   //let r = shopList.find(s =>  m = s.cpcUrl.match(/item\.rakuten\.co\.jp%2[\w-]+%2f(\d+)%2f/));
   let r = shopList.find(s =>  {
-    if(s.mallIconType == "rakuten") return m = cleanUrl(s.cpcUrl).match(/item\.rakuten\.co\.jp\/\w+\/(\d+)/)
+    if(s.mallIconType == "rakuten") return m = this.cleanUrl(s.cpcUrl).match(/item\.rakuten\.co\.jp\/\w+\/(\d+)/)
   });
   return r ? m[1] : null
 }
