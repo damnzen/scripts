@@ -69,15 +69,15 @@ JanSearch.prototype.search= function(query){
 
 JanSearch.prototype.extra = function(jan){
     function parseProductInfo(html) {
-        const productInfo = {};
+        let productInfo = {};
       
         // 正規表現パターンを定義
         const pattern = /<li><span class="cravel-search-results-name">(.*?)<\/span> :\s(.*?)</g;
         
         let match;
         while ((match = pattern.exec(html)) !== null) {
-          const key = match[1].trim();
-          const value = match[2].trim();
+          let key = match[1].trim();
+          let value = match[2].trim();
           productInfo[key] = value;
         }
       
