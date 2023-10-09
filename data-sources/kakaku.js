@@ -162,7 +162,11 @@ Kakaku.prototype.janFromShops = function(shops){
   let m;
   //let r = shopList.find(s =>  m = s.cpcUrl.match(/item\.rakuten\.co\.jp%2[\w-]+%2f(\d+)%2f/));
   let r = shopList.find(s =>  {
-    if(s.mallIconType == "rakuten") return m = this.cleanUrl(s.cpcUrl).match(/item\.rakuten\.co\.jp\/\w+\/(\d+)/)
+    if(s.mallIconType == "rakuten"){
+      log(this.cleanUrl(s.cpcUrl))
+      m = this.cleanUrl(s.cpcUrl).match(/item\.rakuten\.co\.jp\/[\w-]+\/(\d+)/);
+      return true;
+    }
   });
   return r ? m[1] : null
 }
@@ -205,4 +209,3 @@ Kakaku.prototype.extra = function (item) {
   return item
 }
 */
-
