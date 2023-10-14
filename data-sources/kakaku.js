@@ -162,9 +162,10 @@ Kakaku.prototype.janFromShops = function(shops){
   let m;
   //let r = shopList.find(s =>  m = s.cpcUrl.match(/item\.rakuten\.co\.jp%2[\w-]+%2f(\d+)%2f/));
   let r = shopList.find(s =>  {
-    if(s.mallIconType == "rakuten"){
-      log(this.cleanUrl(s.cpcUrl))
-      m = this.cleanUrl(s.cpcUrl).match(/item\.rakuten\.co\.jp\/[\w-]+\/(\d+)/);
+    if (m = this.cleanUrl(s.cpcUrl).match(/item\.rakuten\.co\.jp\/[\w-]+\/(4[59]\d+)/)){
+    //if(s.mallIconType == "rakuten"){
+      //log(this.cleanUrl(s.cpcUrl))
+      //m = this.cleanUrl(s.cpcUrl).match(/item\.rakuten\.co\.jp\/[\w-]+\/(4[59]\d+)/);
       return true;
     }
   });
