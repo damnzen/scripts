@@ -94,6 +94,15 @@ JanSearch.prototype.extra = function(jan){
         }
     }
 
+    function parseImgUrl(html){
+        if(/<link itemprop="image" href="(.*?)">/.test(html)){
+            let image =  RegExp.$1;
+            return image
+        }else{
+            return ""
+        }        
+    }
+
     let url = this.BASE_URL + "detail/" + jan + "/";
     let r = http().get(url);
 
@@ -109,8 +118,9 @@ JanSearch.prototype.extra = function(jan){
             product["salesDate"] = new Date(info["発売日"]);
             product["salesDateUTC"] = product.salesDate.getTime();
         }
-        product["amount"] = amountFromTitle(product.title);
 
+        product.thumb = product.image = parseImgUrl(r.body);
+        product["amount"] = amountFromTitle(product.title);
         product["comment"] = parseComment(r.body);
 
     }
