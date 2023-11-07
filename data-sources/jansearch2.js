@@ -97,6 +97,7 @@ JanSearch.prototype.extra = function(jan){
     function parseImgUrl(html){
         if(/<link itemprop="image" href="(.*?)">/.test(html)){
             let image =  RegExp.$1;
+            image = modifyAmazonImage(image);
             return image
         }else{
             return ""

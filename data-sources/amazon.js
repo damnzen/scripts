@@ -25,7 +25,7 @@ function getAmount(title){
 //}
 
 function imageFromThumb(thumb){
-	return thumb.replace(/_AC.*_\./,"")
+	return thumb.replace(/_AC.*_\./,"").replace(/_SL(\d+)_/, "_AA$1_");
 }
 
 function getSpec(body, name){
@@ -167,9 +167,9 @@ Amazon.prototype.extra = function(asin, getfull){
   
   //画像の取得
   if(/{"landingImageUrl":"([^"]+?)"}/.test(res.body)){
-    o["image"] = RegExp.$1;
+    o["image"] = modifyAmazonImage(RegExp.$1);
   }else if(/data-old-hires="([^"]+?)"/.test(res.body)){
-    o["image"] = RegExp.$1;
+    o["image"] = modifyAmazonImage(RegExp.$1);
     //  }else if(/data-a-dynamic-image="(.*?)"/.test(res.body)){
 //    let imgdata = JSON.parse(RegExp.$1.replace(/&quot;/g, '"'));
 //    o["image"] = Object.keys(imgdata)[Object.keys(imgdata).length -1];
