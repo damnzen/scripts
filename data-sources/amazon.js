@@ -4,11 +4,6 @@ function decNumRefToString(decNumRef) {
 	});
 }
 
-function cleanTitle(title){
-	return title.replace(/\(.*?\)|【.*?】|\[.*?\]|〔 .*?〕/g,"")
-}
-
-
 /*
 function getAmount(title){
 	var m = title.match(/\d+(本|袋|枚|ml|mL|ML|g)/g);

@@ -1,9 +1,5 @@
 function JanSearch(searchUrl){
     this.BASE_URL = "https://dennou-research.com/";
-    this.formatTitle = function(str){return str}
-    this.cleanTitle = function(title){
-        return title.replace(/\(.*?\)|【.*?】|\[.*?\]|〔 .*?〕/g,"")
-    }
     this.searchUrl = searchUrl;
 }
 
@@ -29,7 +25,7 @@ JanSearch.prototype.search= function(query){
             "source" : "jan",
             "id" : jan,
             "jan" : jan,
-            "title" : this.formatTitle(m[2]),
+            "title" : cleanTitle(m[2]),
             "productCode" : productCodeFromTitle(m[2]),
             "amount" : amountFromTitle(m[2]),
             "url" : this.BASE_URL + "detail/" + jan + "/",
@@ -111,7 +107,7 @@ JanSearch.prototype.extra = function(jan){
     if (r.code == 200){
         let info = parseProductInfo(r.body);
         product.jan = jan;
-        product.title = this.cleanTitle(info["商品名"]);
+        product.title = cleanTitle(info["商品名"]);
         product["ProductCode"] = info["商品モデル番号"] || info["品番"] || "";
         product["ASIN"] = info["ASIN"] || "";
         product["maker"] = info["ブランド"] || "";
