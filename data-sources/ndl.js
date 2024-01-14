@@ -2,9 +2,11 @@ function NDL(){
 }
 
 NDL.prototype.getNdc = function(isbn){
-  var urlString = 'http://iss.ndl.go.jp/api/opensearch?isbn=' + isbn;  
+  var urlString = 'https://ndlsearch.ndl.go.jp/api/opensearch?isbn=' + isbn;  
   var r = http().get(urlString);
-  if(/"dcndl:NDC9">(.*?)<\/dc:subject>/.test(r.body)){
+  if(/"dcndl:NDC10">(.*?)<\/dc:subject>/.test(r.body)){
+    return RegExp.$1
+  }else if(/"dcndl:NDC9">(.*?)<\/dc:subject>/.test(r.body)){
     return RegExp.$1
   }else if(/"dcndl:NDC8">(.*?)<\/dc:subject>/.test(r.body)){
     return RegExp.$1
@@ -44,7 +46,7 @@ NDL.prototype.getNdcCats2 = function(ndc){
 NDL.prototype.lookup = function(isbn){
   
   
-  var urlString = 'http://iss.ndl.go.jp/api/opensearch?isbn=' + isbn;  
+  var urlString = 'https://ndlsearch.ndl.go.jp/api/opensearch?isbn=' + isbn;  
   var fetchXml = UrlFetchApp.fetch(urlString);
   
   var documentXml = XmlService.parse(fetchXml.getContentText());
