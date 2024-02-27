@@ -1,4 +1,4 @@
-function JanSearch(){
+function JanSearch1(){
     this.BASE_URL = "https://www.jancode.xyz";
     this.CATEGORIES_MAP = {
         "レディースファッション"  :  "ファッション",
@@ -48,7 +48,7 @@ function JanSearch(){
     }
 }
 
-JanSearch.prototype.search= function(query){
+JanSearch1.prototype.search= function(query){
     let url = this.BASE_URL + "/word/?q=" + encodeURIComponent(query.replace("-", " "));
     let r = http().get(url);
     const regex = /<h4 class="title">(?:JAN|EAN)コード:(\d+)<\/h4>[\s\S]*?<img src="([^"]*)".*?>\s*(.*?)\s*<\/p>/g;
@@ -92,7 +92,7 @@ JanSearch.prototype.search= function(query){
     
 }
 
-JanSearch.prototype.extra = function(jan){
+JanSearch1.prototype.extra = function(jan){
     function removeTags(str){
         return str.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,'')
     }
