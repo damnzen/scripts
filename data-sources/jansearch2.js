@@ -106,6 +106,7 @@ JanSearch.prototype.extra = function(jan){
     let product = {};
     if (r.code == 200){
         let info = parseProductInfo(r.body);
+        if (!Object.keys(info).length) return product
         product.jan = jan;
         product.title = cleanTitle(info["商品名"]);
         product["ProductCode"] = info["商品モデル番号"] || info["品番"] || "";
