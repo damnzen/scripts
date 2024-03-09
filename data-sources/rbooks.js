@@ -95,7 +95,7 @@ Rbooks.prototype.getGenre = function(genreid){
 
 Rbooks.prototype.getResults = function(json){
 	if (json["count"]){
-		let results = json["items"].map(item=>{
+		let results = json["Items"].map(item=>{
 			//let o = json["Items"][0]["Item"];
 			let o = item["Item"];
 			o["source"] = "rakuten";
