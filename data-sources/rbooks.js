@@ -27,7 +27,7 @@ Gbooks.prototype.search = function(query) {
 	var items =  json["items"];
   if (!items) return [];
 	var results = items.map((item,idx) =>{
-		var o = item["volumeInfo"];
+		let o = item["volumeInfo"];
 		o["id"] = idx;
 		o["icon"] = "🅶";
 		o["source"] = "google";
@@ -74,7 +74,7 @@ Rbooks.prototype.search = function(title,author){
 	var req = http();
 	var res = req.get(url);
 	var json = JSON.parse(res.body);
-	log(url);
+	//log(url);
 	return this.getResults(json);
 }
 
@@ -94,20 +94,25 @@ Rbooks.prototype.getGenre = function(genreid){
 
 Rbooks.prototype.getResults = function(json){
 	if (json["count"]){
-		var o = json["Items"][0]["Item"];
-		o["icon"] = "🆁";
-		o["source"] = "rakuten";
-		o["publisher"] = o["publisherName"];
-      if (o["itemCaption"])
-		o["description"] = o["itemCaption"];
-		o["image"] = o["largeImageUrl"].replace(/\?_ex=.*/,"");
-		o["publishedDate"] = formatDate(o["salesDate"]);
-		//o["publishedDate"] = new Date().getTime();
-		o["genre"] = this.getGenre(o["booksGenreId"]);
-		o["author"] = o["author"].replace(/\//g,", ");
-        o["authorKana"] = kanaToHira(o["authorKana"].replace(/,/g, " ").replace(/\//, ", "));
-        o["titleKana"] = kanaToHira(o["titleKana"]);
-		return o
+		let results = json["items"].map(item=>{
+			//let o = json["Items"][0]["Item"];
+			let o = item["Item"];
+			o["icon"] = "🆁";
+			o["source"] = "rakuten";
+			o["publisher"] = o["publisherName"];
+			if (o["itemCaption"]) o["description"] = o["itemCaption"];
+			o["image"] = o["largeImageUrl"].replace(/\?_ex=.*/,"");
+			o["publishedDate"] = formatDate(o["salesDate"]);
+			//o["publishedDate"] = new Date().getTime();
+			o["genre"] = this.getGenre(o["booksGenreId"]);
+			o["author"] = o["author"].replace(/\//g,", ");
+			o["authorKana"] = kanaToHira(o["authorKana"].replace(/,/g, " ").replace(/\//, ", "));
+			o["titleKana"] = kanaToHira(o["titleKana"]);
+			return o
+		});
+		return results
+	}else{
+		return []
 	}
 }
 
