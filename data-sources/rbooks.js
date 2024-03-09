@@ -29,10 +29,11 @@ Gbooks.prototype.search = function(query) {
 	var results = items.map((item,idx) =>{
 		let o = item["volumeInfo"];
 		o["id"] = idx;
-		o["icon"] = "🅶";
+		o["desc"] = "🅶";
 		o["source"] = "google";
         if ("authors" in o)
-			o["author"] = o["desc"] =  o["authors"].join(", ");
+			o["author"]  =  o["authors"].join(", ");
+			o["desc"] += o["author"];
 		if ("publishedDate" in o)
 			o["publishedDate"] = formatDate(o["publishedDate"]);
 		if ("imageLinks" in o)
@@ -97,7 +98,6 @@ Rbooks.prototype.getResults = function(json){
 		let results = json["items"].map(item=>{
 			//let o = json["Items"][0]["Item"];
 			let o = item["Item"];
-			o["icon"] = "🆁";
 			o["source"] = "rakuten";
 			o["publisher"] = o["publisherName"];
 			if (o["itemCaption"]) o["description"] = o["itemCaption"];
@@ -108,6 +108,7 @@ Rbooks.prototype.getResults = function(json){
 			o["author"] = o["author"].replace(/\//g,", ");
 			o["authorKana"] = kanaToHira(o["authorKana"].replace(/,/g, " ").replace(/\//, ", "));
 			o["titleKana"] = kanaToHira(o["titleKana"]);
+			o["desc"] = "🆁" + o["author"];
 			return o
 		});
 		return results
