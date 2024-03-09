@@ -70,7 +70,7 @@ Rbooks.prototype.lookup = function(isbn){
 }
 
 Rbooks.prototype.search = function(title,author){
-	var url = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&title=" + encodeURIComponent(title) + "&author=" + encodeURIComponent(author) + "&outOfStockFlag=1&applicationId=" + this.apikey
+	var url = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&title=" + encodeURIComponent(title) + (author ? "&author=" + encodeURIComponent(author) : "") + "&outOfStockFlag=1&applicationId=" + this.apikey
 	var req = http();
 	var res = req.get(url);
 	var json = JSON.parse(res.body);
