@@ -1,13 +1,27 @@
+function formatDate(date) {
+    var year = date.getUTCFullYear();
+    var month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    var day = String(date.getUTCDate()).padStart(2, '0');
+    var hours = String(date.getUTCHours()).padStart(2, '0');
+    var minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    var seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+    return {
+        datetime: year + month + day + 'T' + hours + minutes + seconds + 'Z', // 'YYYYMMDDTHHMMSSZ'形式
+        date: year + month + day // 'YYYYMMDD'形式
+    };
+}
+
 function createICalEvent(event) {
     var summary = event.summary;
     var description = event.description;
     var location = event.location || '';
-    var start = event.start;
-    var end = event.end;
+    var start = event.start instanceof Date ? formatDate(event.start).datetime : event.start;
+    var end = event.end instanceof Date ? formatDate(event.end).datetime : event.end;
     var isAllDay = event.isAllDay || false;
 
-    var startLine = isAllDay ? 'DTSTART;VALUE=DATE:' + start : 'DTSTART:' + start;
-    var endLine = isAllDay ? 'DTEND;VALUE=DATE:' + end : 'DTEND:' + end;
+    var startLine = isAllDay ? 'DTSTART;VALUE=DATE:' + formatDate(event.start).date : 'DTSTART:' + start;
+    var endLine = isAllDay ? 'DTEND;VALUE=DATE:' + formatDate(event.end).date : 'DTEND:' + end;
     var locationLine = location ? 'LOCATION:' + location : '';
 
     return [
