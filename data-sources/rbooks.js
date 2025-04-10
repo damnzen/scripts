@@ -65,7 +65,7 @@ Rbooks.prototype.lookup = function(isbn){
 	var req = http();
 	var res = req.get(url);
 	var json = JSON.parse(res.body);
-	return this.getResults(json)
+	return this.getResults(json)[0];
 	//log(res.body);
 
 }
