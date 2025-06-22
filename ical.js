@@ -16,6 +16,9 @@ function createICalEvent(event) {
     var summary = event.summary;
     var description = event.description;
     var location = event.location || '';
+    var uid = event.uid || '';
+    var sequence = event.sequence || '';
+    var lastModified = event.lastmodified;
     var start = event.start instanceof Date ? formatDate(event.start).datetime : event.start;
     var end = event.end instanceof Date ? formatDate(event.end).datetime : event.end;
     var isAllDay = event.isAllDay || false;
@@ -23,17 +26,23 @@ function createICalEvent(event) {
     var startLine = isAllDay ? 'DTSTART;VALUE=DATE:' + formatDate(event.start).date : 'DTSTART:' + start;
     var endLine = isAllDay ? 'DTEND;VALUE=DATE:' + formatDate(event.end).date : 'DTEND:' + end;
     var locationLine = location ? 'LOCATION:' + location : '';
+    var uidLine = uid ? 'UID:' + uid : '';
+    var sequenceLine = sequence ? 'SEQUENCE:' + sequence : '';
+    var lastModifiedLine = lastModified instanceof Date ? 'LAST-MODIFIED:' + formatDate(lastModified).datetime : '';
 
     return [
         'BEGIN:VEVENT',
         'SUMMARY:' + summary,
         'DESCRIPTION:' + description,
         locationLine,
+        uidLine,
+        sequenceLine,
+        lastModifiedLine,
         startLine,
         endLine,
         'END:VEVENT'
     ].filter(function(line) {
-        return line;
+        return line; // 空行をフィルタリング
     }).join('\n');
 }
 
