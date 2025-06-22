@@ -7,8 +7,8 @@ function formatDate(date) {
     var seconds = String(date.getUTCSeconds()).padStart(2, '0');
 
     return {
-        datetime: year + month + day + 'T' + hours + minutes + seconds + 'Z', // 'YYYYMMDDTHHMMSSZ'形式
-        date: year + month + day // 'YYYYMMDD'形式
+        datetime: year + month + day + 'T' + hours + minutes + seconds + 'Z',
+        date: year + month + day
     };
 }
 
@@ -33,12 +33,13 @@ function createICalEvent(event) {
         endLine,
         'END:VEVENT'
     ].filter(function(line) {
-        return line; // 空行をフィルタリング
+        return line;
     }).join('\n');
 }
 
-function createICal() {
+function createICal(options) {
     var events = [];
+    var calname = options && options.calname || 'カレンダー名';
 
     return {
         addEvent: function(event) {
@@ -48,7 +49,8 @@ function createICal() {
             var header = [
                 'BEGIN:VCALENDAR',
                 'VERSION:2.0',
-                'PRODID:-//Your Organization//Your Product//EN'
+                'PRODID:-//Your Organization//Your Product//EN',
+                'X-WR-CALNAME:' + calname
             ];
             var eventStrings = events.map(function(event) {
                 return createICalEvent(event);
