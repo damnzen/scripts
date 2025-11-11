@@ -1,109 +1,130 @@
-function formatDate(date) {
-    var year = date.getUTCFullYear();
-    var month = String(date.getUTCMonth() + 1).padStart(2, '0');
-    var day = String(date.getUTCDate()).padStart(2, '0');
-    var hours = String(date.getUTCHours()).padStart(2, '0');
-    var minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    var seconds = String(date.getUTCSeconds()).padStart(2, '0');
-
-    return {
-        datetime: year + month + day + 'T' + hours + minutes + seconds + 'Z',
-        date: year + month + day
-    };
+function formatDate(d){
+	d = d.replace(/[年月]/g,"-").replace(/[日頃]/g,"");
+	d = (d + "-01-01").slice(0,10)
+    let out = Date.parse(d);
+    //let out = new Date(d);
+  return out ? out : null
 }
 
-// 75バイトを超えた行はCRLF + スペースで折り返す（ラインフォールディング）
-function foldICalLine(line) {
-    var folded = '';
-    var maxLen = 75;
-    while (line.length > maxLen) {
-        folded += line.substring(0, maxLen) + '\r\n ';
-        line = line.substring(maxLen);
-    }
-    folded += line;
-    return folded;
+function Gbooks() {
 }
 
-// description の特殊文字エスケープと改行を \n に変換
-function escapeDescription(text) {
-    if (!text) return '';
-    // 改行コードを \n に統一
-    var normalized = text.replace(/\r\n|\r|\n/g, '\\n');
-    // "\", ",", ";" をエスケープ
-    normalized = normalized.replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/;/g, '\\;');
-    return normalized;
+Gbooks.prototype.lookup = function(isbn) {
+	var query = "isbn:" + isbn;
+	var results = this.search(query);
+	if (results.length){
+		return results[0]
+	}else{
+		return {}
+	}
 }
 
-function createICalEvent(event) {
-    var summary = event.summary;
-    var description = escapeDescription(event.description);
-    var location = event.location || '';
-    var uid = event.uid || '';
-    var sequence = event.sequence || '';
-    var lastModified = event.lastmodified;
-    var dtstamp = event.dtstamp;
-    var start = event.start instanceof Date ? formatDate(event.start).datetime : event.start;
-    var end = event.end instanceof Date ? formatDate(event.end).datetime : event.end;
-    var isAllDay = event.isAllDay || false;
-
-    var startLine = isAllDay ? 'DTSTART;VALUE=DATE:' + formatDate(event.start).date : 'DTSTART:' + start;
-    var endLine = isAllDay ? 'DTEND;VALUE=DATE:' + formatDate(event.end).date : 'DTEND:' + end;
-    var locationLine = location ? 'LOCATION:' + location : '';
-    var uidLine = uid ? 'UID:' + uid : '';
-    var sequenceLine = sequence ? 'SEQUENCE:' + sequence : '';
-    var lastModifiedLine = lastModified instanceof Date ? 'LAST-MODIFIED:' + formatDate(lastModified).datetime : '';
-    var dtstampLine = '';
-    if (dtstamp) {
-        dtstampLine = dtstamp instanceof Date ? 'DTSTAMP:' + formatDate(dtstamp).datetime : 'DTSTAMP:' + dtstamp;
-    }
-
-    var lines = [
-        'BEGIN:VEVENT',
-        dtstampLine,
-        'SUMMARY:' + summary,
-        'DESCRIPTION:' + description,
-        locationLine,
-        uidLine,
-        sequenceLine,
-        lastModifiedLine,
-        startLine,
-        endLine,
-        'END:VEVENT'
-    ].filter(function(line) {
-        return line;
-    });
-
-    return lines.map(foldICalLine).join('\r\n');
+Gbooks.prototype.search = function(query) {
+	var url = "https://www.googleapis.com/books/v1/volumes?country=jp&q=" + query;
+	var req = http();
+	var res = req.get(url);
+	var json = JSON.parse(res.body);
+	var items =  json["items"];
+  if (!items) return [];
+	var results = items.map((item,idx) =>{
+		let o = item["volumeInfo"];
+		o["id"] = idx;
+		o["desc"] = "🅶";
+		o["source"] = "google";
+        if ("authors" in o)
+			o["author"]  =  o["authors"].join(", ");
+			o["desc"] += o["author"];
+		if ("publishedDate" in o)
+			o["publishedDate"] = formatDate(o["publishedDate"]);
+		if ("imageLinks" in o)
+			//o["image"] = o["thumb"] = o["imageLinks"]["thumbnail"];
+          o["thumb"] = o["imageLinks"]["thumbnail"];
+		if ("industryIdentifiers" in o ){
+			o["industryIdentifiers"].some(o1 => {
+				if (o1["type"] == "ISBN_13"){
+					o["isbn"] = o1["identifier"];
+//					o["id"] = o["isbn"] = o1["identifier"];
+					o["desc"] += " *";
+					//log(o["id"]);
+					return true
+				}
+			});
+		}
+		return o;
+	});
+	return results
 }
 
-function createICal(options) {
-    var events = [];
-    var calname = options && options.calname || 'カレンダー名';
-
-    return {
-        addEvent: function(event) {
-            events.push(event);
-        },
-        toString: function() {
-            var header = [
-                'BEGIN:VCALENDAR',
-                'VERSION:2.0',
-                'PRODID:-//Your Organization//Your Product//EN',
-                'X-WR-CALNAME:' + calname
-            ];
-
-            var foldedHeader = header.map(foldICalLine);
-            var eventStrings = events.map(function(event) {
-                return createICalEvent(event);
-            });
-            var footer = foldICalLine('END:VCALENDAR');
-
-            return foldedHeader.concat(eventStrings, footer).join('\r\n');
-        },
-        generateFile: function() {
-            var icalString = this.toString();
-            var blob = new Blob([icalString], { type: 'text/calendar' });
-            return URL.createObjectURL(blob);
-        }
-    };
+function Rbooks(apikey){
+	this.apikey = apikey;
 }
+
+Rbooks.prototype.lookup = function(isbn){
+	var url = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&outOfStockFlag=1&isbn=" + isbn + "&applicationId=" + this.apikey
+	//log(isbn);
+	var req = http();
+	var res = req.get(url);
+	var json = JSON.parse(res.body);
+	return this.getResults(json)[0];
+	//log(res.body);
+
+}
+
+Rbooks.prototype.search = function(title,author){
+	var url = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&title=" + encodeURIComponent(title) + (author ? "&author=" + encodeURIComponent(author) : "") + "&outOfStockFlag=1&applicationId=" + this.apikey
+	var req = http();
+	var res = req.get(url);
+	var json = JSON.parse(res.body);
+	//log(url);
+	return this.getResults(json);
+}
+
+Rbooks.prototype.getGenre = function(genreid){
+  genreid = genreid.split("/")[0];
+  var url = "https://app.rakuten.co.jp/services/api/BooksGenre/Search/20121128?format=json&elements=parent&formatVersion=2&booksGenreId=" + genreid + "&applicationId=" + this.apikey
+  //log(genreid);
+  var req = http();
+  var res = req.get(url);
+  if(res.status == "200"){
+    var json = JSON.parse(res.body);
+    return json["parents"][0]["booksGenreName"]
+  }else{
+    return null
+  }
+}
+
+Rbooks.prototype.getResults = function(json){
+	if (json["count"]){
+		let results = json["Items"].map(item=>{
+			//let o = json["Items"][0]["Item"];
+			let o = item["Item"];
+			o["source"] = "rakuten";
+			o["publisher"] = o["publisherName"];
+			if (o["itemCaption"]) o["description"] = o["itemCaption"];
+			o["image"] = o["largeImageUrl"].replace(/\?_ex=.*/,"");
+			o["publishedDate"] = formatDate(o["salesDate"]);
+			//o["publishedDate"] = new Date().getTime();
+			o["genre"] = this.getGenre(o["booksGenreId"]);
+			o["author"] = o["author"].replace(/\//g,", ");
+			o["authorKana"] = kanaToHira(o["authorKana"].replace(/,/g, " ").replace(/\//, ", "));
+			o["titleKana"] = kanaToHira(o["titleKana"]);
+			o["desc"] = "🆁" + o["author"];
+			return o
+		});
+		return results
+	}else{
+		return []
+	}
+}
+
+Rbooks.prototype.extra = function(g_result){
+	//log(Object.keys(g_result));
+	if("isbn" in g_result){
+		r_result = this.lookup(g_result["isbn"]);
+		//log(Object.keys(r_result));
+	}else{
+		r_result = this.search(g_result["title"], g_result["author"]);
+	}
+	return Object.assign(g_result, r_result)
+}
+
