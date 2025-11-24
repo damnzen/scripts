@@ -30,7 +30,8 @@ function escapeDescription(text) {
     // 改行コードを \n に統一
     var normalized = text.replace(/\r\n|\r|\n/g, '\\n');
     // "\", ",", ";" をエスケープ
-    normalized = normalized.replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/;/g, '\\;');
+    //normalized = normalized.replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/;/g, '\\;');
+    normalized = normalized.replace(/,/g, '\\,').replace(/;/g, '\\;');
     return normalized;
 }
 
