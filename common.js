@@ -36,6 +36,7 @@ i.send();
 }
 
 function automate2(uri, payload){
+/*
 let i = intent("com.llamalab.automate.intent.action.START_FLOW");
 i.data(uri);
 if(payload){
@@ -43,6 +44,12 @@ if(payload){
 		i.extra(key, payload[key]);
 	});
 }
+i.send();
+*/
+let url = "automate://run?flow="+encodeURIComponent(uri)+"&payload=" +encodeURIComponent(JSON.stringify(payload));
+
+let i = intent("android.intent.action.VIEW");
+i.data(url);
 i.send();
 }
 
