@@ -1,0 +1,50 @@
+{
+        "qiita.com": {
+            keywords: {
+                keyword1: "h1",
+                keyword2: "#tag-list a, .category-tag"
+            },
+            buttons: [
+                {
+                    buttonName: "検索A",
+                    icon: "🔍",
+                    action: "link",
+                    urlTemplate: "https://search.example.com?q={keyword1}&a={keyword2}"
+                },
+                {
+                    buttonName: "分析B",
+                    icon: "📊",
+                    action: "function",
+                    funcName: "analyzeKeywords",
+                    params: ["keyword1", "keyword2"]  // 関数に渡すキーワード名配列
+                },
+                {
+                    buttonName: "集計C",
+                    icon: "📈",
+                    action: "function",
+                    funcName: "countByKeyword"
+                }
+            ]
+        },
+        "aaa.com": {
+            keywords: {
+                keyword1: ".service-tags, h2, h3",
+                keyword2: ".benefits li, .discounts span"
+            },
+            buttons: [
+                {
+                    buttonName: "AAA検索",
+                    icon: "🚗",
+                    action: "link",
+                    urlTemplate: "https://www.aaa.com/search?q={keyword1}&type={keyword2}"
+                },
+                {
+                    buttonName: "サービス分析",
+                    icon: "📋",
+                    action: "function",
+                    funcName: "analyzeAAA",
+                    params: ["keyword1"]
+                }
+            ]
+        }
+    }
