@@ -128,4 +128,3 @@ Rbooks.prototype.extra = function(g_result){
 	return Object.assign(g_result, r_result)
 }
 
-
