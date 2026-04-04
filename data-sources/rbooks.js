@@ -55,12 +55,18 @@ Gbooks.prototype.search = function(query) {
 	return results
 }
 
-function Rbooks(apikey){
-	this.apikey = apikey;
+function Rbooks(applicationId, accessKey) {
+	this.applicationId = applicationId;
+	this.accessKey = accessKey;
 }
 
+// function Rbooks(apikey){
+// 	this.apikey = apikey;
+// }
+
 Rbooks.prototype.lookup = function(isbn){
-	var url = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&outOfStockFlag=1&isbn=" + isbn + "&applicationId=" + this.apikey
+	//var url = "https://openapi.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&outOfStockFlag=1&isbn=" + isbn + "&applicationId=" + this.apikey
+	var url = "https://openapi.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&outOfStockFlag=1&isbn=" + isbn + "&applicationId=" + this.applicationId + "&accessKey=" + this.accessKey;
 	//log(isbn);
 	var req = http();
 	var res = req.get(url);
@@ -71,7 +77,8 @@ Rbooks.prototype.lookup = function(isbn){
 }
 
 Rbooks.prototype.search = function(title,author){
-	var url = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&title=" + encodeURIComponent(title) + (author ? "&author=" + encodeURIComponent(author) : "") + "&outOfStockFlag=1&applicationId=" + this.apikey
+	var url = "https://openapi.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&title=" + encodeURIComponent(title) + (author ? "&author=" + encodeURIComponent(author) : "") + "&outOfStockFlag=1" + "&applicationId=" + this.applicationId + "&accessKey=" + this.accessKey;
+	//log(isbn);
 	var req = http();
 	var res = req.get(url);
 	var json = JSON.parse(res.body);
@@ -81,7 +88,8 @@ Rbooks.prototype.search = function(title,author){
 
 Rbooks.prototype.getGenre = function(genreid){
   genreid = genreid.split("/")[0];
-  var url = "https://app.rakuten.co.jp/services/api/BooksGenre/Search/20121128?format=json&elements=parent&formatVersion=2&booksGenreId=" + genreid + "&applicationId=" + this.apikey
+  var url = "https://openapi.rakuten.co.jp/services/api/BooksGenre/Search/20121128?format=json&elements=parent&formatVersion=2&booksGenreId=" + genreid + + "&applicationId=" + this.applicationId + "&accessKey=" + this.accessKey;
+	//log(isbn);
   //log(genreid);
   var req = http();
   var res = req.get(url);
