@@ -6,7 +6,8 @@ function formatDate(d){
   return out ? out : null
 }
 
-function Gbooks() {
+function Gbooks(apikey) {
+	this.apikey = apikey
 }
 
 Gbooks.prototype.lookup = function(isbn) {
@@ -20,7 +21,7 @@ Gbooks.prototype.lookup = function(isbn) {
 }
 
 Gbooks.prototype.search = function(query) {
-	var url = "https://www.googleapis.com/books/v1/volumes?country=jp&q=" + query;
+	var url = "https://www.googleapis.com/books/v1/volumes?country=jp&q=" + encodeURIComponent(query) + (this.apikey ? "&key=" + this.apikey: "");
 	var req = http();
 	var res = req.get(url);
 	var json = JSON.parse(res.body);
@@ -88,7 +89,7 @@ Rbooks.prototype.search = function(title,author){
 
 Rbooks.prototype.getGenre = function(genreid){
   genreid = genreid.split("/")[0];
-  var url = "https://openapi.rakuten.co.jp/services/api/BooksGenre/Search/20121128?format=json&elements=parent&formatVersion=2&booksGenreId=" + genreid + + "&applicationId=" + this.applicationId + "&accessKey=" + this.accessKey;
+  var url = "https://openapi.rakuten.co.jp/services/api/BooksGenre/Search/20121128?format=json&elements=parent&formatVersion=2&booksGenreId=" + genreid + "&applicationId=" + this.applicationId + "&accessKey=" + this.accessKey;
 	//log(isbn);
   //log(genreid);
   var req = http();
@@ -112,7 +113,8 @@ Rbooks.prototype.getResults = function(json){
 			o["image"] = o["largeImageUrl"].replace(/\?_ex=.*/,"");
 			o["publishedDate"] = formatDate(o["salesDate"]);
 			//o["publishedDate"] = new Date().getTime();
-			o["genre"] = this.getGenre(o["booksGenreId"]);
+			//o["genre"] = this.getGenre(o["booksGenreId"]);
+			o["genre"] = "";
 			o["author"] = o["author"].replace(/\//g,", ");
 			o["authorKana"] = kanaToHira(o["authorKana"].replace(/,/g, " ").replace(/\//, ", "));
 			o["titleKana"] = kanaToHira(o["titleKana"]);
