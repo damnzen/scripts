@@ -107,10 +107,12 @@ Rbooks.prototype.getResults = function(json){
 		let results = json["Items"].map(item=>{
 			//let o = json["Items"][0]["Item"];
 			let o = item["Item"];
+			//o["id"] = o;
 			o["source"] = "rakuten";
 			o["publisher"] = o["publisherName"];
 			if (o["itemCaption"]) o["description"] = o["itemCaption"];
 			o["image"] = o["largeImageUrl"].replace(/\?_ex=.*/,"");
+			o["thumb"] = o["smallImageUrl"];
 			o["publishedDate"] = formatDate(o["salesDate"]);
 			//o["publishedDate"] = new Date().getTime();
 			//o["genre"] = this.getGenre(o["booksGenreId"]);
@@ -119,6 +121,7 @@ Rbooks.prototype.getResults = function(json){
 			o["authorKana"] = kanaToHira(o["authorKana"].replace(/,/g, " ").replace(/\//, ", "));
 			o["titleKana"] = kanaToHira(o["titleKana"]);
 			o["desc"] = "🆁" + o["author"];
+			o["isbn"] = o["isbn"];
 			return o
 		});
 		return results
@@ -137,4 +140,5 @@ Rbooks.prototype.extra = function(g_result){
 	}
 	return Object.assign(g_result, r_result)
 }
+
 
