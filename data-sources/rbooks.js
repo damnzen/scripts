@@ -29,7 +29,7 @@ Gbooks.prototype.search = function(query) {
   if (!items) return [];
 	var results = items.map((item,idx) =>{
 		let o = item["volumeInfo"];
-		o["id"] = idx;
+		o["id"] = o;
 		o["desc"] = "🅶";
 		o["source"] = "google";
         if ("authors" in o)
@@ -104,10 +104,10 @@ Rbooks.prototype.getGenre = function(genreid){
 
 Rbooks.prototype.getResults = function(json){
 	if (json["count"]){
-		let results = json["Items"].map(item=>{
+		let results = json["Items"].map((item, index)=>{
 			//let o = json["Items"][0]["Item"];
 			let o = item["Item"];
-			//o["id"] = o;
+			o["id"] = index;
 			o["source"] = "rakuten";
 			o["publisher"] = o["publisherName"];
 			if (o["itemCaption"]) o["description"] = o["itemCaption"];
