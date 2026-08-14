@@ -9,7 +9,10 @@ JanSearch.prototype.search= function(query){
     let body = encodeURI("q=" + query)
     //url = 'https://dennou-research.com/search/?s=67340357f312a39254dc3d092d107121'
     let req = http();
-    req.headers({"Content-Type" : "application/x-www-form-urlencoded"});
+    req.headers({
+        "Content-Type" : "application/x-www-form-urlencoded",
+        "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+    });
     let r = req.post(url, body);
     //log(r.body);
     
